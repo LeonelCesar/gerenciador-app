@@ -3,7 +3,7 @@ import { FiFolderMinus, FiHome, FiLink, FiPaperclip, FiRss, FiSettings, FiUsers 
 function RouteSelect() {
   return (
     <div className="space-y-1">
-      <Rout Icon={FiHome} selected={true} title="Dashboard" />
+      <Rout Icon={FiHome} selected={false} title="Dashboard" />   {/* Aqui pode ser true para ficar ativo por padrão */}
       <Rout Icon={FiUsers} selected={false} title="Team" />
       <Rout Icon={FiPaperclip} selected={false} title="Invoices" />
       <Rout Icon={FiLink} selected={false} title="Interations" />
@@ -15,6 +15,9 @@ function RouteSelect() {
 }
 
 export default RouteSelect;
+
+
+import { IconType } from "react-icons";
 
 const Rout = ({
   selected,
@@ -39,4 +42,4 @@ const Rout = ({
       <span>{title}</span>
     </button>
   )
-};
+}; 

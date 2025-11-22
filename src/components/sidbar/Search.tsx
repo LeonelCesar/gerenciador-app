@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiCommand, FiSearch } from "react-icons/fi";
+import { FiCommand, FiSearch } from "react-icons/fi"; 
 import { CommandMenu } from "./CommandMenu";
 
 function Search() {
@@ -16,12 +16,12 @@ function Search() {
           }}
           type="text"
           placeholder="Search"
-          className="w-full bg-transparent placeholder:text-stone-400 focus:outline-none"
+          className="w-full bg-transparent placeholder:text-stone-400 cursor-pointer focus:outline-none"
         />
 
-        <span className="p-1 text-sm flex gap-0.5 items-center shadow bg-stone-50 rounded absolute right-1.5 top-1/2 -translate-y-1/2">
+      {/*   <span className="p-1 text-sm flex gap-0.5 items-center shadow bg-stone-50 rounded absolute right-1.5 top-1/2 -translate-y-1/2">
           <FiCommand />k
-        </span>
+        </span> */}
       </div>
       <CommandMenu 
         open={open}
