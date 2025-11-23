@@ -1,7 +1,7 @@
 function TeamPage() {
   return (
     <div>
-      <strong>Team</strong>
+      <strong>Team Conforme</strong>
     </div>
   );
 }
