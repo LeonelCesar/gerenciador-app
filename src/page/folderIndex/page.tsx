@@ -1,4 +1,4 @@
-function FolderIndexPage() {
+function FolderIndex() {
   return (
     <div>
       <strong>Folder Index</strong>
@@ -6,4 +6,4 @@ function FolderIndexPage() {
   );
 }
 
-export default FolderIndexPage;
+export default FolderIndex;

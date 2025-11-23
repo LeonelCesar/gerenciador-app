@@ -1,4 +1,4 @@
-function InvoicesPage() {
+function Invoices() {
   return (
     <div>
       <strong>Invoices</strong>
@@ -6,4 +6,4 @@ function InvoicesPage() {
   );
 }
 
-export default InvoicesPage;
+export default Invoices;

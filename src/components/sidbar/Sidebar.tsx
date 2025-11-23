@@ -1,7 +1,6 @@
 import AccountTaggle from "./AccountTaggle";
 import Search from "./Search";
-import RouteSelect from "./RouteSelect"; 
-/* import PlanFooter from "./PlanFooter"; */
+import RouteSelect from "./RouteSelect";
 
 function Sidbar() {
   return (
@@ -11,7 +10,6 @@ function Sidbar() {
         <Search />
         <RouteSelect />
       </div>
-      {/*  <PlanFooter /> */}
     </div>
   );
 }

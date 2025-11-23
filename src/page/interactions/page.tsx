@@ -1,4 +1,4 @@
-function InteractionsPage() {
+function Interactions() {
   return (
     <div>
       <strong>Interactions</strong>
@@ -6,4 +6,4 @@ function InteractionsPage() {
   );
 }
 
-export default InteractionsPage;
+export default Interactions;

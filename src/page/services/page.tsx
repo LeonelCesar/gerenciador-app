@@ -1,4 +1,4 @@
-function ServicesPage() {
+function Services() {
   return (
     <div>
       <strong>Services Pages</strong>
@@ -6,4 +6,4 @@ function ServicesPage() {
   );
 }
 
-export default ServicesPage;
+export default Services;

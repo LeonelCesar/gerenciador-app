@@ -1,4 +1,4 @@
-function TeamPage() {
+function Team() {
   return (
     <div>
       <strong>Team Conforme</strong>
@@ -6,4 +6,4 @@ function TeamPage() {
   );
 }
 
-export default TeamPage;
+export default Team;

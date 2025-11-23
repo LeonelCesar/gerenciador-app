@@ -1,15 +1,16 @@
-import { FiFolderMinus, FiHome, FiLink, FiPaperclip, FiRss, FiSettings, FiUsers } from "react-icons/fi";
+/* import { FiFolderMinus, FiHome, FiLink, FiPaperclip, FiRss, FiSettings, FiUsers } from "react-icons/fi";
+import Route from "../sidbar/Rout";
 
 function RouteSelect() {
   return (
     <div className="space-y-1">
-      <Rout Icon={FiHome} selected={false} title="Dashboard" />   {/* Aqui pode ser true para ficar ativo por padrão */}
-      <Rout Icon={FiUsers} selected={false} title="Team" />
-      <Rout Icon={FiPaperclip} selected={false} title="Invoices" />
-      <Rout Icon={FiLink} selected={false} title="Interations" />
-      <Rout Icon={FiFolderMinus} selected={false} title="Folders Index" />
-      <Rout Icon={FiRss} selected={false} title="Internet Work" />
-      <Rout Icon={FiSettings} selected={false} title="Services" />
+      <Rout Icon={FiHome} title="Dashboard" to="/dashboard" />
+      <Rout Icon={FiUsers} title="Team" to="/team" />
+      <Rout Icon={FiPaperclip} title="Invoices" to="/invoices" />
+      <Rout Icon={FiLink} title="Interactions" to="/interactions" />
+      <Rout Icon={FiFolderMinus} title="Folders Index" to="/folders" />
+      <Rout Icon={FiRss} title="Internet Work" to="/internet" />
+      <Rout Icon={FiSettings} title="Services" to="/services" />
     </div>
   )
 }
@@ -42,4 +43,23 @@ const Rout = ({
       <span>{title}</span>
     </button>
   )
-}; 
+};  */
+
+import { FiFolderMinus, FiHome, FiLink, FiPaperclip, FiRss, FiSettings, FiUsers } from "react-icons/fi";
+import Rout from "../sidbar/Rout";
+
+function RouteSelect() {
+  return (
+    <div className="space-y-1">
+      <Rout Icon={FiHome} title="Dashboard" to="/dashboard" />
+      <Rout Icon={FiUsers} title="Team" to="/team" />
+      <Rout Icon={FiPaperclip} title="Invoices" to="/invoices" />
+      <Rout Icon={FiLink} title="Interactions" to="/interactions" />
+      <Rout Icon={FiFolderMinus} title="Folders Index" to="/folders" />
+      <Rout Icon={FiRss} title="Internet Work" to="/internet" />
+      <Rout Icon={FiSettings} title="Services" to="/services" />
+    </div>
+  );
+}
+
+export default RouteSelect;

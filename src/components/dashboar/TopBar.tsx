@@ -2,7 +2,7 @@ import { FiCalendar } from "react-icons/fi";
 
 function TopBar() {
   return (
-    <div className="border-b px-4 mt-2 pb-4 border-stone-200">
+    <div className="border-b px-4 mt-2 pb-4 border-stone-200 sticky top-0 bg-stone-100 z-10">
       <div className="flex items-center justify-between p-0.5">
         <div>
           <span className="text-sm font-bold block">
@@ -23,3 +23,4 @@ function TopBar() {
 }
 
 export default TopBar;
+

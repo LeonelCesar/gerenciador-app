@@ -1,4 +1,4 @@
-function InternetWorkPage() {
+function InternetWork() {
   return (
     <div>
       <strong>Internet Work</strong>
@@ -6,4 +6,4 @@ function InternetWorkPage() {
   );
 }
 
-export default InternetWorkPage;
+export default InternetWork;
