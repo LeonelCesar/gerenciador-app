@@ -60,7 +60,7 @@ const Card = ({
   sparklineData: { value: number }[];
 }) => {
   return (
-    <div className="col-span-4 p-4 mt-4 rounded border border-stone-300 bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div className="col-span-4 p-4 mt-4 rounded border border-stone-300 shadow-sm hover:shadow-md transition-shadow duration-300">
       <div className="flex mb-4 flex-col sm:flex-row items-start sm:items-center justify-between">
         <div className="flex-1">
           <h3 className="text-stone-500 mb-2 text-ss">{title}</h3>

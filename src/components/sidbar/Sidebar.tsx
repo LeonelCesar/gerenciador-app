@@ -1,5 +1,5 @@
 import AccountTaggle from "./AccountTaggle";
-import Search from "./Search";
+/* import Search from "./Search"; */
 import RouteSelect from "./RouteSelect";
 
 function Sidbar() {
@@ -7,7 +7,7 @@ function Sidbar() {
     <div>
       <div className="sticky top-4 h-[calc(100vh-32px-48px)]">
         <AccountTaggle />
-        <Search />
+       {/*  <Search /> */}
         <RouteSelect />
       </div>
     </div>

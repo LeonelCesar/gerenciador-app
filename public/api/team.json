@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "name": "Leonel César",
+    "role": "Front-End Developer",
+    "email": "leonel@example.com",
+    "avatar": "https://i.pravatar.cc/150?img=1",
+    "createdAt": "2025-05-10"
+  },
+  {
+    "id": "2",
+    "name": "Madalena Silva",
+    "role": "UI/UX Designer",
+    "email": "madalena@example.com",
+    "avatar": "https://i.pravatar.cc/150?img=2",
+    "createdAt": "2025-02-20"
+  },
+  {
+    "id": "3",
+    "name": "Isaac Mateus",
+    "role": "Back-End Developer",
+    "email": "isaac@example.com",
+    "avatar": "https://i.pravatar.cc/150?img=3",
+    "createdAt": "2025-04-05"
+  },
+  {
+    "id": "4",
+    "name": "Guida Fernando",
+    "role": "Product Manager",
+    "email": "guida@example.com",
+    "avatar": "https://i.pravatar.cc/150?img=4",
+    "createdAt": "2025-03-10"
+  },
+  {
+    "id": "5",
+    "name": "Rosita Almeida",
+    "role": "QA Engineer",
+    "email": "rosita@example.com",
+    "avatar": "https://i.pravatar.cc/150?img=5",
+    "createdAt": "2025-01-15"
+  },
+  {
+    "id": "6",
+    "name": "Cleurio António",
+    "role": "DevOps Engineer",
+    "email": "cleurio@example.com",
+    "avatar": "https://i.pravatar.cc/150?img=6",
+    "createdAt": "2025-05-15"
+  }
+]

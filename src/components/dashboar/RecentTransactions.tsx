@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FiArrowUpRight, FiDollarSign, FiMoreHorizontal } from "react-icons/fi";
 
 // --- STATUS BADGES ---
@@ -52,6 +52,11 @@ export default function RecentTransactions() {
   const [priceFilter, setPriceFilter] = useState<"all" | "low" | "high">("all");
   const [dateFilter, setDateFilter] = useState<"all" | "new" | "old">("all");
   const [page, setPage] = useState(1);
+
+
+  useEffect(() => {
+    setPage(1)
+  },[priceFilter, dateFilter])
 
   // --- FILTROS ---
  const filteredData = useMemo(() => {

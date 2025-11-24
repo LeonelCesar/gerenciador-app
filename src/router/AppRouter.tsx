@@ -14,12 +14,12 @@ function AppRouter() {
       <Route path="/" element={<Navigate to="/dashboard" />} />;
       <Route path="/dashboard" element={<Dashboard/>} />
       <Route path="/team" element={<Team />} />;
-      <Route path="/folderIndex" element={<FolderIndex />} />;
+      <Route path="/folders" element={<FolderIndex />} />;
       <Route path="/invoices" element={<Invoices />} />;
       <Route path="/team" element={<Team />} />
       <Route path="/interactions" element={<Interactions />} />
       <Route path="/services" element={<Services />} />
-      <Route path="/internetWork" element={<InternetWork />} />;
+      <Route path="/internet" element={<InternetWork />} />;
       <Route path="*" element={<div>Página não encontrada</div>} />
     </Routes>
   );

@@ -1,9 +1,8 @@
-/* import Dashboard from "./components/dashboar/Dashboar";  */
 import { BrowserRouter } from "react-router-dom";
 import Sidbar from "./components/sidbar/Sidebar";
 
 import AppRouter from "./router/AppRouter";
-import TopBar from "./components/dashboar/TopBar";
+import Header from "./components/Header/header";
 
 function App() {
   return (
@@ -12,10 +11,7 @@ function App() {
         <Sidbar />
 
         <div className="p-4 rounded-lg shadow">
-          {/*  <Dashboard />  */}
-          <header>
-            <TopBar />
-          </header>
+          <Header />
 
           <AppRouter />
         </div>

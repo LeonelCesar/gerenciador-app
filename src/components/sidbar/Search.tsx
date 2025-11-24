@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FiCommand, FiSearch } from "react-icons/fi"; 
-import { CommandMenu } from "./CommandMenu";
+/* import { CommandMenu } from "./CommandMenu";
 
 function Search() {
   const [open, setOpen] = useState(false);
@@ -28,4 +28,4 @@ function Search() {
   );
 }
 
-export default Search;
+export default Search; */
