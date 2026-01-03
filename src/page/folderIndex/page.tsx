@@ -1,9 +1,11 @@
-function FolderIndex() {
+function FolderIndexPage() {
   return (
-    <div>
+    <section>
       <strong>Folder Index</strong>
-    </div>
+      <p>Esse Componente Exibe uma Lista de Pastas</p>
+      <h4>Por desenvolver...</h4>
+    </section>
   );
 }
 
-export default FolderIndex;
+export default FolderIndexPage;

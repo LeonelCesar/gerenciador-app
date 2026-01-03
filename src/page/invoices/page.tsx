@@ -7,6 +7,7 @@ import {
   FiArrowDown,
   FiX,
 } from "react-icons/fi";
+
 import { Factura, getFacturas, updateFactura } from "./../../lib/fake-db";
 import Modal from "./../../components/Modal/modal";
 
@@ -21,7 +22,7 @@ function Invoice() {
   >("all");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<Factura | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editValue, setEditValue] = useState<number>(0);
 
   const pageSize = 5;
@@ -39,9 +40,9 @@ function Invoice() {
 
     let result = data.filter((f) => {
       const term = search.toLowerCase();
+
       return (
-        f.id.toLowerCase().includes(term) ||
-        f.client.toLowerCase().includes(term)
+        String(f.id).includes(term) || f.client.toLowerCase().includes(term)
       );
     });
 
@@ -263,7 +264,7 @@ function Invoice() {
             <strong>Data:</strong> {selected?.date}
           </p>
           <p className="text-stone-500 text-xs">
-            ID interno: {selected?.internalId || "—"}
+            ID interno: {selected?.internalId || "-"}
           </p>
         </div>
 

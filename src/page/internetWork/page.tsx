@@ -1,8 +1,9 @@
 function InternetWork() {
   return (
-    <div>
+    <section>
       <strong>Internet Work</strong>
-    </div>
+      <p>Por Desenvolver....</p>
+    </section>
   );
 }
 
