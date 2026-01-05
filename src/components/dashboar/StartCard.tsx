@@ -1,7 +1,58 @@
+import { useEffect, useMemo, useState } from "react";
 import { FiTrendingDown, FiTrendingUp } from "react-icons/fi";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
+
+// Hook: anima valor (pulse)
+
+function usePulseCurrency(value: string) {
+  const baseValue = useMemo(() => {
+    return Number(value.replace(/[^0-9.-]+/g, ""));
+  }, [value]);
+
+  const [animated, setAnimated] = useState(baseValue);
+
+  useEffect(() => {
+    const peak = baseValue * 1.05;
+    const duration = 1200;
+    const start = performance.now();
+
+    function animate(now: number) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // ease-in-out
+
+      const eased =
+        progress < 0.5
+          ? 2 * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+      const value =
+        progress <= 0.5
+          ? baseValue + (peak - baseValue) * (eased * 2)
+          : peak - (peak - baseValue) * ((eased - 0.5) * 2);
+
+      setAnimated(value);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setAnimated(baseValue);
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }, [baseValue]);
+
+  return animated.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+}
+
+/* StartCard */
 
 export const StartCard = () => {
   const sparklineData = [
@@ -44,6 +95,8 @@ export const StartCard = () => {
   );
 };
 
+/* Card  */
+
 const Card = ({
   title,
   value,
@@ -59,18 +112,22 @@ const Card = ({
   period: string;
   sparklineData: { value: number }[];
 }) => {
+  const animatedValue = usePulseCurrency(value);
+
   return (
     <div className="col-span-4 p-4 mt-4 rounded border border-stone-300 shadow-sm hover:shadow-md transition-shadow duration-300">
       <div className="flex mb-4 flex-col sm:flex-row items-start sm:items-center justify-between">
         <div className="flex-1">
           <h3 className="text-stone-500 mb-2 text-ss">{title}</h3>
 
-          {/* Valor com gradient */}
+          {/* Valor com gradient (inalterado) */}
+
           <p className="text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-purple-400">
-            {value}
+            {animatedValue}
           </p>
 
-          {/* Mini sparkline */}
+          {/* Sparkline (inalterado) */}
+
           <div className="w-full h-12 mt-2">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={sparklineData}>
@@ -87,7 +144,7 @@ const Card = ({
           </div>
         </div>
 
-        {/* Pill badge animado */}
+        {/* Pill badge (inalterado) */}
         <span
           className={`mt-2 sm:mt-0 flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transform transition-transform duration-500 ${
             trend === "up"
@@ -100,7 +157,7 @@ const Card = ({
         </span>
       </div>
 
-      {/* Período com tooltip */}
+      {/* Período + tooltip (inalterado) */}
       <p
         className="text-stone-500 text-sm cursor-help"
         data-tooltip-content={`This shows the trend for ${period}`}
@@ -108,7 +165,6 @@ const Card = ({
         {period}
       </p>
 
-      {/* Tooltip global */}
       <ReactTooltip />
     </div>
   );
