@@ -239,7 +239,7 @@ export default function InteractionsPage() {
       </header>
 
       {/* CONTROLS */}
-      <section className="bg-white p-4 rounded-md shadow-sm mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+      <section className="rounded-md mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
         <input
           value={query}
           onChange={(e) => {

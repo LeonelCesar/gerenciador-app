@@ -40,7 +40,7 @@ function ActivityGraph() {
   return (
     <div className="col-span-8 overflow-hidden rounded border border-stone-300">
       <div className="p-4">
-        <h3 className="flex items-center gap-1.5 font-medium">
+        <h3 className="flex items-center gap-1.5 font-medium text-gray-400">
           <FiUser />
           Activity
         </h3>

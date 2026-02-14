@@ -100,7 +100,7 @@ export default function RecentTransactions() {
   // --- TABLE HEADER ---
   const TableHeader = () => (
     <thead>
-      <tr className="text-xs font-semibold text-stone-600 border-b border-stone-300">
+      <tr className="text-sm font-semibold text-gray-400 border-b border-stone-300">
         <th className="text-left p-2">Customer</th>
         <th className="text-left p-2">Plan</th>
         <th className="text-left p-2">Date</th>
@@ -121,10 +121,10 @@ export default function RecentTransactions() {
           alt={item.name}
         />
         <div>
-          <p className="font-semibold text-stone-800">{item.name}</p>
+          <p className="font-semibold text-gray-400">{item.name}</p>
           <a
             href="#"
-            className="text-violet-600 underline flex items-center gap-1 text-xs"
+            className="text-violet-400 underline flex items-center gap-1 text-xs"
           >
             {item.id}
             <FiArrowUpRight />
@@ -133,16 +133,16 @@ export default function RecentTransactions() {
       </td>
 
       <td className="p-2">
-        <span className="px-2 py-1 text-xs rounded-full bg-violet-100 text-violet-700 font-semibold">
+        <span className="px-2 py-1 text-xs rounded-full bg-violet-100 text-violet-400 font-semibold">
           {item.sku}
         </span>
       </td>
 
-      <td className="p-2 text-stone-600">
+      <td className="p-2 text-gray-400">
         {new Date(item.date).toLocaleDateString("en-US")}
       </td>
 
-      <td className="p-2 font-semibold text-stone-800">${item.price}</td>
+      <td className="p-2 font-semibold text-gray-400">${item.price}</td>
 
       <td className="p-2">
         <span
@@ -163,10 +163,10 @@ export default function RecentTransactions() {
   );
 
   return (
-    <div className="col-span-12 p-4 rounded border border-stone-300 bg-white">
+    <div className="col-span-12 p-4 rounded border border-stone-300 bg-stone-100">
       {/* HEADER */}
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="flex items-center gap-1.5 font-medium text-stone-800">
+        <h3 className="flex items-center gap-1.5 font-medium text-gray-400">
           <FiDollarSign />
           Recent Transactions
         </h3>
@@ -182,7 +182,7 @@ export default function RecentTransactions() {
           onChange={(e) =>
             setPriceFilter(e.target.value as "all" | "low" | "high")
           }
-          className="px-3 py-2 text-sm rounded-lg border border-stone-300  bg-stone-100 text-stone-800 transition-all focus:outline-none focus:ring-2  focus:ring-violet-500 focus:border-violet-500 hover:bg-stone-200"
+          className="px-3 py-2 text-sm rounded-lg border border-stone-300  bg-stone-100 text-gray-400 transition-all focus:outline-none focus:ring-1  focus:ring-violet-400 focus:border-violet-400 hover:bg-stone-200"
         >
           <option value="all">All Prices</option>
           <option value="low">Below $5</option>
@@ -199,12 +199,12 @@ export default function RecentTransactions() {
               rounded-lg
               border border-stone-300 
               bg-stone-100
-              text-stone-800
+              text-gray-400
               transition-all
               focus:outline-none 
-              focus:ring-2 
-              focus:ring-violet-500
-              focus:border-violet-500
+              focus:ring-1 
+              focus:ring-violet-400
+              focus:border-violet-400
               hover:bg-stone-200"
         >
           <option value="all">All Dates</option>
@@ -226,21 +226,21 @@ export default function RecentTransactions() {
       {/* PAGINAÇÃO */}
       <div className="mt-4 flex items-center justify-end gap-2 text-sm">
         <button
-          disabled={page === 1}
+          disabled={page <= 1}
           onClick={() => setPage(page - 1)}
-          className="px-3 py-1 border rounded disabled:opacity-40"
+          className="px-3 py-1 border rounded disabled:opacity-40 text-gray-400 disabled:cursor-not-allowed"
         >
           Prev
         </button>
 
-        <span className="px-4 py-1 text-stone-700">
+        <span className="px-4 py-1 text-gray-400">
           Page {page} / {totalPages === 0 ? 1 : totalPages}
         </span>
 
         <button
-          disabled={page === totalPages || totalPages === 0}
+          disabled={page >= totalPages || totalPages <= 0}
           onClick={() => setPage(page + 1)}
-          className="px-3 py-1 border rounded disabled:opacity-40"
+          className="px-3 py-1 border rounded disabled:opacity-40 text-gray-400 disabled:cursor-not-allowed"
         >
           Next
         </button>
