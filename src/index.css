@@ -17,3 +17,16 @@ code {
     monospace;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: brightness(0) saturate(100%) invert(48%) sepia(10%) saturate(400%) hue-rotate(180deg) brightness(95%);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+
+
