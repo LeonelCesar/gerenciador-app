@@ -357,22 +357,22 @@ const TransactionsTable = ({
       paid: {
         label: "Pago",
         className:
-          "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+          "bg-green-100 border border-lg text-green-600",
       },
       pending: {
         label: "Pendente",
         className:
-          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+          "bg-yellow-100 text-yellow-800 border border-lg",
       },
       overdue: {
         label: "Vencido",
         className:
-          "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+          "bg-red-100 text-red-800 border border-lg",
       },
       refunded: {
         label: "Reembolsado",
         className:
-          "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400",
+          "bg-gray-100 text-gray-800 border border-lg",
       },
     };
     const c = config[status] || config.pending;
@@ -400,25 +400,25 @@ const TransactionsTable = ({
               <th className="pb-3 font-medium text-center">Ações</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+          <tbody className="divide-y divide-stone-300 ">
             {paginatedTransactions.map((tx) => (
               <tr
                 key={tx.id}
-                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
+                className="hover:bg-stone-200 transition"
               >
-                <td className="py-3 font-medium text-gray-900 dark:text-white">
+                <td className="py-3 font-medium text-stone-400">
                   {tx.customerName}
                 </td>
-                <td className="py-3 text-gray-600 dark:text-gray-400">
+                <td className="py-3 text-stone-400">
                   {tx.plan}
                 </td>
-                <td className="py-3 text-right font-medium text-gray-900 dark:text-white">
+                <td className="py-3 text-right font-medium text-stone-400 pr-6">
                   {formatCurrency(tx.amount)}
                 </td>
-                <td className="py-3 text-gray-600 dark:text-gray-400">
+                <td className="py-3 text-stone-400">
                   {formatDate(tx.date)}
                 </td>
-                <td className="py-3 text-gray-600 dark:text-gray-400">
+                <td className="py-3 text-stone-400 ">
                   {formatDate(tx.dueDate)}
                 </td>
                 <td className="py-3">{getStatusBadge(tx.status)}</td>
@@ -426,7 +426,7 @@ const TransactionsTable = ({
                   <div className="flex items-center justify-center gap-2">
                     <button
                       onClick={() => onView(tx)}
-                      className="rounded-lg p-1.5 text-stone-400 hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-gray-800"
+                      className="rounded-lg p-1.5 text-stone-400 hover:bg-gray-100 hover:text-blue-600"
                       title="Ver detalhes"
                     >
                       <Eye className="h-4 w-4" />
@@ -457,7 +457,7 @@ const TransactionsTable = ({
           <button
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="flex items-center gap-1 rounded-lg px-3 py-1 text-sm text-stone-400 disabled:opacity-50 hover:bg-gray-100 dark:text-gray-400"
+            className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-stone-400 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-stone-300 border border-stone-400"
           >
             {" "}
             <ChevronLeft className="h-4 w-4" /> Anterior{" "}
@@ -468,7 +468,7 @@ const TransactionsTable = ({
           <button
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="flex items-center gap-1 rounded-lg px-3 py-1 text-sm text-gray-600 disabled:opacity-50 hover:bg-gray-100 dark:text-gray-400"
+            className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-stone-400 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-stone-300 border border-stone-400"
           >
             {" "}
             Próxima <ChevronRight className="h-4 w-4" />{" "}
@@ -732,7 +732,7 @@ export default function Dashboard() {
 
         {/* Tabela de Transações */}
         <div className="mt-8 rounded-xl p-5 shadow-sm border border-stone-400">
-          <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-stone-400">
             <h2 className="text-xl font-semibold">Transações Recentes</h2>
             <div className="flex flex-wrap gap-3">
               <div className="relative focus:outline-none">
@@ -742,13 +742,13 @@ export default function Dashboard() {
                   placeholder="Buscar cliente ou fatura..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="rounded-lg border border-stone-400 text-stone-400 py-1.5 pl-9 pr-3 text-sm focus:outline-none"
+                  className="rounded-lg border border-stone-400 bg-stone-100 text-stone-400 py-1.5 pl-9 pr-3 text-sm focus:outline-none"
                 />
               </div>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="rounded-lg border border-stone-400 text-stone-400 px-3 py-1.5 text-sm"
+                className="rounded-lg border border-stone-400 bg-stone-100 text-stone-400 px-3 py-1.5 text-sm"
               >
                 <option value="all">Todos os status</option>
                 <option value="paid">Pago</option>
@@ -759,7 +759,7 @@ export default function Dashboard() {
               <select
                 value={filterPlan}
                 onChange={(e) => setFilterPlan(e.target.value)}
-                className="rounded-lg border border-stone-400 text-stone-400 px-3 py-1.5 text-sm"
+                className="rounded-lg border border-stone-400 bg-stone-100 text-stone-400 px-3 py-1.5 text-sm"
               >
                 <option value="all">Todos os planos</option>
                 <option value="Plano Basic">Basic</option>
@@ -770,7 +770,7 @@ export default function Dashboard() {
             </div>
           </div>
           {filteredTransactions.length === 0 ? (
-            <div className="py-12 text-center text-gray-500">
+            <div className="py-12 text-center text-gray-400">
               Nenhuma transação encontrada.
             </div>
           ) : (
