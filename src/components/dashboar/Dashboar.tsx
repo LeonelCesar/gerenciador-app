@@ -608,7 +608,7 @@ export default function Dashboard() {
   if (loading)
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+        <Loader2 className="h-14 w-14 animate-spin text-blue-500" />
       </div>
     );
   if (error)
@@ -739,10 +739,10 @@ export default function Dashboard() {
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Buscar cliente ou fatura..."
+                  placeholder="Buscar cliente ou fatura"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="rounded-lg border border-stone-400 bg-stone-100 text-stone-400 py-1.5 pl-9 pr-3 text-sm focus:outline-none"
+                  className="rounded-lg border border-stone-400 bg-stone-100 text-stone-400 py-1.5 pl-9 pr-3 text-sm focus:outline-none placeholder:text-stone-400"
                 />
               </div>
               <select

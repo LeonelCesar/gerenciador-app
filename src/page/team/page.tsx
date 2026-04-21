@@ -1,4 +1,3 @@
-// src/pages/Members.tsx
 import { useState, useEffect, useMemo } from 'react';
 import {
   Users,
@@ -15,7 +14,7 @@ import {
   XCircle,
 } from 'lucide-react';
 
-// ---------- Tipos ----------
+// Tipos
 interface Member {
   id: string;
   name: string;
@@ -30,12 +29,12 @@ interface Member {
 // Lista de cargos disponíveis
 const ROLES = ['Administrador', 'Gerente de Vendas', 'Desenvolvedor', 'Suporte ao Cliente', 'Designer', 'Marketing', 'Financeiro'];
 
-// ---------- Dados Mockados ----------
+// Dados Mockados
 const mockMembers: Member[] = [
   {
     id: '1',
-    name: 'João Silva',
-    email: 'joao.silva@saas.com',
+    name: 'Leonel Helder',
+    email: 'leonelhelder@saas.com',
     role: 'Administrador',
     avatar: 'https://ui-avatars.com/api/?background=3b82f6&color=fff&name=João+Silva',
     department: 'Tecnologia',
@@ -44,8 +43,8 @@ const mockMembers: Member[] = [
   },
   {
     id: '2',
-    name: 'Maria Oliveira',
-    email: 'maria.oliveira@saas.com',
+    name: 'Eloa César',
+    email: 'eloamariacesar@gmail.com',
     role: 'Gerente de Vendas',
     avatar: 'https://ui-avatars.com/api/?background=10b981&color=fff&name=Maria+Oliveira',
     department: 'Vendas',
@@ -54,8 +53,8 @@ const mockMembers: Member[] = [
   },
   {
     id: '3',
-    name: 'Carlos Mendes',
-    email: 'carlos.mendes@saas.com',
+    name: 'Adão Costa',
+    email: 'adaocosta@gmail.com',
     role: 'Desenvolvedor',
     avatar: 'https://ui-avatars.com/api/?background=f59e0b&color=fff&name=Carlos+Mendes',
     department: 'Tecnologia',
@@ -64,8 +63,8 @@ const mockMembers: Member[] = [
   },
   {
     id: '4',
-    name: 'Ana Costa',
-    email: 'ana.costa@saas.com',
+    name: 'Isaac Sófecia',
+    email: 'isaacpaulo@gmail.com',
     role: 'Suporte ao Cliente',
     avatar: 'https://ui-avatars.com/api/?background=ef4444&color=fff&name=Ana+Costa',
     department: 'Suporte',
@@ -74,8 +73,8 @@ const mockMembers: Member[] = [
   },
   {
     id: '5',
-    name: 'Pedro Santos',
-    email: 'pedro.santos@saas.com',
+    name: 'Alberto César',
+    email: 'albertocosta@gmail.com',
     role: 'Designer',
     avatar: 'https://ui-avatars.com/api/?background=8b5cf6&color=fff&name=Pedro+Santos',
     department: 'Design',
@@ -84,7 +83,7 @@ const mockMembers: Member[] = [
   },
 ];
 
-// ---------- API Simulada ----------
+// API Simulada
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const fetchMembers = async (): Promise<Member[]> => {
@@ -112,7 +111,7 @@ const deleteMember = async (id: string): Promise<void> => {
   await delay(400);
 };
 
-// ---------- Componente Modal Base ----------
+// Componente Modal Base
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -124,12 +123,12 @@ const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-900">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h2>
+          <h2 className="text-xl font-semibold text-stone-500">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800"
+            className="rounded-lg py-2 p-4 text-stone-400 hover:bg-stone-300 bg:text-stone-400 border border-stone-400"
           >
             <X className="h-5 w-5" />
           </button>
@@ -140,7 +139,7 @@ const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
   );
 };
 
-// ---------- Modal de Confirmação de Exclusão ----------
+// Modal de Confirmação de Exclusão
 interface ConfirmDeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -182,7 +181,7 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, memberName, isLoading 
   );
 };
 
-// ---------- Card de Membro ----------
+// Card de Membro
 interface MemberCardProps {
   member: Member;
   onEdit: (member: Member) => void;
@@ -193,26 +192,26 @@ const MemberCard = ({ member, onEdit, onDelete }: MemberCardProps) => {
   const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString('pt-PT');
 
   return (
-    <div className="group relative rounded-xl border border-gray-200 bg-white p-5 transition-all hover:shadow-lg dark:border-gray-800 dark:bg-gray-900">
+    <div className="group relative rounded-xl border border-stone-400  p-5 transition-all hover:shadow-lg">
       <div className="flex items-start gap-4">
         {/* Avatar */}
         <img
           src={member.avatar}
           alt={member.name}
-          className="h-14 w-14 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+          className="h-14 w-14 rounded-full object-cover ring-2 ring-stone-400"
         />
 
         <div className="flex-1">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between ">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{member.name}</h3>
-              <div className="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <h3 className="text-lg font-semibold text-slote-400 ">{member.name}</h3>
+              <div className="mt-1 flex items-center gap-2 text-sm text-stone-400">
                 <Briefcase className="h-3.5 w-3.5" />
                 <span>{member.role}</span>
                 <span className="mx-1">•</span>
                 <span>{member.department}</span>
               </div>
-              <div className="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <div className="mt-1 flex items-center gap-2 text-sm text-stone-400">
                 <Mail className="h-3.5 w-3.5" />
                 <span>{member.email}</span>
               </div>
@@ -220,13 +219,13 @@ const MemberCard = ({ member, onEdit, onDelete }: MemberCardProps) => {
             <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
               <button
                 onClick={() => onEdit(member)}
-                className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-gray-800"
+                className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-300 hover:text-blue-600"
               >
                 <Edit className="h-4 w-4" />
               </button>
               <button
                 onClick={() => onDelete(member.id, member.name)}
-                className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-800"
+                className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-300 hover:text-red-600"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -236,8 +235,8 @@ const MemberCard = ({ member, onEdit, onDelete }: MemberCardProps) => {
             <span
               className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 ${
                 member.status === 'active'
-                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                  : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
+                  ? 'bg-stone-200 text-green-500'
+                  : 'bg-stone-200 text-stone-500'
               }`}
             >
               {member.status === 'active' ? (
@@ -247,7 +246,7 @@ const MemberCard = ({ member, onEdit, onDelete }: MemberCardProps) => {
               )}
               {member.status === 'active' ? 'Ativo' : 'Inativo'}
             </span>
-            <span>Entrou em {formatDate(member.joinedAt)}</span>
+            <span className='text-stone-400'>Entrou em {formatDate(member.joinedAt)}</span>
           </div>
         </div>
       </div>
@@ -255,7 +254,7 @@ const MemberCard = ({ member, onEdit, onDelete }: MemberCardProps) => {
   );
 };
 
-// ---------- Componente Principal Members ----------
+// Componente Principal Members
 export default function Members() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
@@ -410,8 +409,8 @@ export default function Members() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-14 w-14 animate-spin text-blue-500" />
       </div>
     );
   }
@@ -430,7 +429,7 @@ export default function Members() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Toast */}
         {toastMessage && (
@@ -446,8 +445,8 @@ export default function Members() {
         {/* Cabeçalho */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Equipe</h1>
-            <p className="mt-1 text-gray-600 dark:text-gray-400">Gerencie os membros da sua organização</p>
+            <h1 className="text-3xl font-bold tracking-tight text-stone-500 ">Equipe</h1>
+            <p className="mt-1 text-stone-400">Gerencie os membros da sua organização</p>
           </div>
           <button
             onClick={() => {
@@ -464,20 +463,20 @@ export default function Members() {
         {/* Filtros */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
             <input
               type="text"
-              placeholder="Buscar por nome ou e-mail..."
+              placeholder="Buscar por nome e-mail"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+              className="w-full bg-stone-100 rounded-lg border border-stone-400 py-2 pl-10 pr-4 text-sm focus:outline-none placeholder:text-stone-400"
             />
           </div>
           <div className="flex gap-3">
             <select
               value={roleFilter}
               onChange={e => setRoleFilter(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+              className="rounded-lg  bg-stone-100 border border-stone-400 px-3 py-2 text-sm focus:outline-none"
             >
               <option value="all">Todos os cargos</option>
               {ROLES.map(role => (
@@ -489,7 +488,7 @@ export default function Members() {
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+              className="rounded-lg border  bg-stone-100 border-stone-400 px-3 py-2 text-sm focus:outline-none"
             >
               <option value="all">Todos os status</option>
               <option value="active">Ativos</option>
@@ -500,9 +499,9 @@ export default function Members() {
 
         {/* Lista de membros */}
         {filteredMembers.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center dark:border-gray-800 dark:bg-gray-900">
+          <div className="rounded-lg border border-dashed border-stone-400 p-12 text-center">
             <Users className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-3 text-lg font-medium text-gray-900 dark:text-white">Nenhum membro encontrado</h3>
+            <h3 className="mt-3 text-lg font-medium text-stone-400">Nenhum membro encontrado</h3>
             <p className="mt-1 text-gray-600 dark:text-gray-400">
               {searchTerm || roleFilter !== 'all' || statusFilter !== 'all'
                 ? 'Tente outros filtros'
@@ -530,31 +529,31 @@ export default function Members() {
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Adicionar Membro">
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome completo *</label>
+            <label className="block text-sm font-medium text-stone-400">Nome completo *</label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2 focus:outline-none"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">E-mail *</label>
+            <label className="block text-sm font-medium text-stone-400">E-mail *</label>
             <input
               type="email"
               required
               value={formData.email}
               onChange={e => setFormData({ ...formData, email: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2 focus:outline-none"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cargo</label>
+            <label className="block text-sm font-medium text-stone-400">Cargo</label>
             <select
               value={formData.role}
               onChange={e => setFormData({ ...formData, role: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-700 dark:bg-gray-800"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2 focus:outline-none"
             >
               {ROLES.map(role => (
                 <option key={role}>{role}</option>
@@ -562,21 +561,21 @@ export default function Members() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Departamento</label>
+            <label className="block text-sm font-medium text-stone-400">Departamento</label>
             <input
               type="text"
               value={formData.department}
               onChange={e => setFormData({ ...formData, department: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2 focus:outline-none placeholder:text-stone-400"
               placeholder="Ex: Tecnologia"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+            <label className="block text-sm font-medium text-stone-400">Status</label>
             <select
               value={formData.status}
               onChange={e => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-700 dark:bg-gray-800"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2 focus:outline-none"
             >
               <option value="active">Ativo</option>
               <option value="inactive">Inativo</option>
@@ -586,7 +585,7 @@ export default function Members() {
             <button
               type="button"
               onClick={() => setIsCreateModalOpen(false)}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium"
+              className="rounded-lg border border-stone-400 hover:bg-stone-300 px-4 py-2 text-sm font-medium"
             >
               Cancelar
             </button>
@@ -612,7 +611,7 @@ export default function Members() {
               required
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2"
             />
           </div>
           <div>
@@ -622,7 +621,7 @@ export default function Members() {
               required
               value={formData.email}
               onChange={e => setFormData({ ...formData, email: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2"
             />
           </div>
           <div>
@@ -630,7 +629,7 @@ export default function Members() {
             <select
               value={formData.role}
               onChange={e => setFormData({ ...formData, role: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-700 dark:bg-gray-800"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2"
             >
               {ROLES.map(role => (
                 <option key={role}>{role}</option>
@@ -643,7 +642,7 @@ export default function Members() {
               type="text"
               value={formData.department}
               onChange={e => setFormData({ ...formData, department: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2"
             />
           </div>
           <div>
@@ -651,7 +650,7 @@ export default function Members() {
             <select
               value={formData.status}
               onChange={e => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-700 dark:bg-gray-800"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2"
             >
               <option value="active">Ativo</option>
               <option value="inactive">Inativo</option>
@@ -661,7 +660,7 @@ export default function Members() {
             <button
               type="button"
               onClick={() => setIsEditModalOpen(false)}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm"
+              className="rounded-lg border border-stone-400 hover:bg-stone-300 px-4 py-2 text-sm"
             >
               Cancelar
             </button>
