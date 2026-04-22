@@ -226,13 +226,13 @@ const Modal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div
-        className={`w-full ${sizeClasses[size]} rounded-2xl bg-stone-100 p-6 shadow-2xl dark:bg-stone-300 max-h-[90vh] overflow-y-auto`}
+        className={`w-full ${sizeClasses[size]} rounded-2xl bg-stone-100 p-6 shadow-2xl max-h-[90vh] overflow-y-auto`}
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-stone-500">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-md border border-stone-400 p-4 py-2 text-stone-400 hover:bg-stone-100 hover:text-stone-300 dark:hover:bg-stone-400 "
+            className="rounded-md border border-stone-400 p-4 py-2 text-stone-400 hover:bg-stone-300"
           >
             <X className="h-5 w-5" />
           </button>
@@ -267,7 +267,7 @@ const ConfirmDeleteModal = ({
           <AlertCircle className="h-6 w-6" />
           <h2 className="text-xl font-semibold">Confirmar exclusão</h2>
         </div>
-        <p className="mt-4 text-stone-700 dark:text-stone-300">
+        <p className="mt-4 text-stone-300 ">
           Tem certeza que deseja excluir a fatura{" "}
           <strong>{invoiceNumber}</strong>? Esta ação não pode ser desfeita.
         </p>
@@ -546,8 +546,8 @@ export default function Invoices() {
 
   if (loading)
     return (
-      <div className="flex min-h-screen items-center justify-center bg-stone-50 dark:bg-stone-950">
-        <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-14 w-14 animate-spin text-blue-500" />
       </div>
     );
   if (error)
@@ -558,7 +558,7 @@ export default function Invoices() {
     );
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Toast */}
         {toastMessage && (
@@ -572,10 +572,10 @@ export default function Invoices() {
         {/* Cabeçalho */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-stone-800 dark:text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-stone-500">
               Faturas
             </h1>
-            <p className="mt-1 text-stone-500 dark:text-stone-400">
+            <p className="mt-1 text-stone-400">
               Gerencie todas as faturas emitidas
             </p>
           </div>
@@ -589,65 +589,65 @@ export default function Invoices() {
 
         {/* Cards de Métricas com cores stone */}
         <div className="mb-8 grid gap-5 sm:grid-cols-4">
-          <div className="rounded-xl bg-stone-100 p-5 shadow-sm border border-stone-200 dark:bg-stone-800 dark:border-stone-700">
+          <div className="rounded-xl p-5 shadow-sm border border-stone-400">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-stone-600 dark:text-stone-400">
+                <p className="text-sm text-stone-400">
                   Total Faturas
                 </p>
-                <p className="text-2xl font-bold text-stone-800 dark:text-white">
+                <p className="text-2xl font-bold text-stone-400">
                   {metrics.totalInvoices}
                 </p>
               </div>
-              <FileText className="h-8 w-8 text-stone-500 dark:text-stone-400" />
+              <FileText className="h-8 w-8 text-stone-400" />
             </div>
           </div>
-          <div className="rounded-xl bg-stone-100 p-5 shadow-sm border border-stone-200 dark:bg-stone-800 dark:border-stone-700">
+          <div className="rounded-xl p-5 shadow-sm border border-stone-400">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-stone-600 dark:text-stone-400">
+                <p className="text-sm text-stone-400">
                   Valor Total
                 </p>
-                <p className="text-2xl font-bold text-stone-800 dark:text-white">
+                <p className="text-2xl font-bold text-stone-400">
                   {formatCurrency(metrics.totalValue)}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-stone-500 dark:text-stone-400" />
+              <DollarSign className="h-8 w-8 text-stone-400" />
             </div>
           </div>
-          <div className="rounded-xl bg-stone-100 p-5 shadow-sm border border-stone-200 dark:bg-stone-800 dark:border-stone-700">
+          <div className="rounded-xl p-5 shadow-sm border border-stone-400 ">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-stone-600 dark:text-stone-400">
+                <p className="text-sm text-stone-400 ">
                   Valor Pago
                 </p>
-                <p className="text-2xl font-bold text-stone-800 dark:text-white">
+                <p className="text-2xl font-bold text-stone-400">
                   {formatCurrency(metrics.paidValue)}
                 </p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+              <CheckCircle className="h-8 w-8 text-stone-400" />
             </div>
           </div>
-          <div className="rounded-xl bg-stone-100 p-5 shadow-sm border border-stone-200 dark:bg-stone-800 dark:border-stone-700">
+          <div className="rounded-xl p-5 shadow-sm border border-stone-400">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-stone-600 dark:text-stone-400">
                   Valor Pendente
                 </p>
-                <p className="text-2xl font-bold text-stone-800 dark:text-white">
+                <p className="text-2xl font-bold text-stone-400">
                   {formatCurrency(metrics.pendingValue)}
                 </p>
               </div>
-              <Clock className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
+              <Clock className="h-8 w-8 text-stone-400 " />
             </div>
           </div>
         </div>
 
         {/* Filtros (sem calendários) */}
-        <div className="mb-6 rounded-xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-700">
+        <div className="mb-6 rounded-xl  p-4 shadow-sm border border-stone-400">
           <div className="flex items-center gap-2 mb-3">
-            <Filter className="h-4 w-4 text-stone-500" />
-            <span className="font-medium text-stone-700">Filtros</span>
+            <Filter className="h-4 w-4 text-stone-400" />
+            <span className="font-medium text-stone-400">Filtros</span>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <input
@@ -655,12 +655,12 @@ export default function Invoices() {
               placeholder="Cliente..."
               value={searchCustomer}
               onChange={(e) => setSearchCustomer(e.target.value)}
-              className="rounded-lg border border-stone-300 p-2 text-sm focus:border-blue-500 focus:outline-none dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+              className="rounded-lg border border-stone-400 placeholder:text-stone-400 p-2 text-sm focus:outline-none bg-stone-100"
             />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-lg border border-stone-300 p-2 text-sm dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+              className="rounded-lg border border-stone-400 p-2 text-sm focus:outline-none bg-stone-100"
             >
               <option value="all">Todos os status</option>
               {STATUS_OPTIONS.map((opt) => (
@@ -676,7 +676,7 @@ export default function Invoices() {
               onChange={(e) =>
                 setMinTotal(e.target.value ? Number(e.target.value) : "")
               }
-              className="rounded-lg border border-stone-300 p-2 text-sm dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+              className="rounded-lg border border-stone-400 placeholder:text-stone-400 p-2 text-sm focus:outline-none bg-stone-100"
             />
             <input
               type="number"
@@ -685,46 +685,46 @@ export default function Invoices() {
               onChange={(e) =>
                 setMaxTotal(e.target.value ? Number(e.target.value) : "")
               }
-              className="rounded-lg border border-stone-300 p-2 text-sm dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+              className="rounded-lg border border-stone-400 placeholder:text-stone-400 p-2 text-sm focus:outline-none bg-stone-100"
             />
           </div>
         </div>
 
         {/* Tabela */}
-        <div className="rounded-xl bg-white shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-700 overflow-hidden">
+        <div className="rounded-xl shadow-sm border border-stone-400 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="border-b border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800/50">
-                <tr className="text-left text-stone-600 dark:text-stone-400">
-                  <th className="p-3 font-medium">Fatura Nº</th>
-                  <th className="p-3 font-medium">Cliente</th>
-                  <th className="p-3 font-medium text-right">Total</th>
-                  <th className="p-3 font-medium">Status</th>
-                  <th className="p-3 font-medium">Emissão</th>
-                  <th className="p-3 font-medium">Vencimento</th>
-                  <th className="p-3 font-medium text-center">Ações</th>
+              <thead className="border-b border-stone-400 bg-stone-300">
+                <tr className="text-left text-stone-400">
+                  <th className="p-3 font-medium text-stone-500">Fatura Nº</th>
+                  <th className="p-3 font-medium text-stone-500">Cliente</th>
+                  <th className="p-3 font-medium text-right text-stone-500">Total</th>
+                  <th className="p-3 font-medium text-stone-500">Status</th>
+                  <th className="p-3 font-medium text-stone-500">Emissão</th>
+                  <th className="p-3 font-medium text-stone-500">Vencimento</th>
+                  <th className="p-3 font-medium text-center text-stone-500">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
                 {paginatedInvoices.map((inv) => (
                   <tr
                     key={inv.id}
-                    className="hover:bg-stone-50 dark:hover:bg-stone-800/50 transition"
+                    className="hover:bg-stone-200 transition"
                   >
-                    <td className="p-3 font-medium text-stone-800 dark:text-white">
+                    <td className="p-3 font-medium text-stone-400">
                       {inv.invoiceNumber}
                     </td>
-                    <td className="p-3 text-stone-700 dark:text-stone-300">
+                    <td className="p-3 text-stone-400 ">
                       {inv.customerName}
                     </td>
-                    <td className="p-3 text-right font-semibold text-stone-800 dark:text-white">
+                    <td className="p-3 text-right font-semibold text-stone-400">
                       {formatCurrency(inv.total)}
                     </td>
                     <td className="p-3">{getStatusBadge(inv.status)}</td>
-                    <td className="p-3 text-stone-600 dark:text-stone-400">
+                    <td className="p-3 text-stone-400 ">
                       {formatDate(inv.issueDate)}
                     </td>
-                    <td className="p-3 text-stone-600 dark:text-stone-400">
+                    <td className="p-3 text-stone-400">
                       {formatDate(inv.dueDate)}
                     </td>
                     <td className="p-3">
@@ -734,13 +734,13 @@ export default function Invoices() {
                             setSelectedInvoice(inv);
                             setIsViewModalOpen(true);
                           }}
-                          className="rounded-lg p-1.5 text-stone-500 hover:bg-stone-100 hover:text-blue-600 dark:hover:bg-stone-800"
+                          className="rounded-lg p-1.5 text-stone-500 hover:bg-stone-300"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => openEditModal(inv)}
-                          className="rounded-lg p-1.5 text-stone-500 hover:bg-stone-100 hover:text-green-600 dark:hover:bg-stone-800"
+                          className="rounded-lg p-1.5 text-stone-500 hover:bg-stone-300"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
@@ -748,7 +748,7 @@ export default function Invoices() {
                           onClick={() =>
                             handleDeleteClick(inv.id, inv.invoiceNumber)
                           }
-                          className="rounded-lg p-1.5 text-stone-500 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-800"
+                          className="rounded-lg p-1.5 text-stone-500 hover:bg-stone-300"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -771,11 +771,11 @@ export default function Invoices() {
           </div>
           {/* Paginação */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-stone-200 px-4 py-3 dark:border-stone-700">
+            <div className="flex items-center justify-between border-t border-stone-400 px-4 py-3">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="flex items-center gap-1 rounded-lg px-3 py-1 text-sm text-stone-600 disabled:opacity-50 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800"
+                className="flex items-center gap-1 rounded-lg px-3 py-1 text-sm text-stone-400 disabled:opacity-50 hover:bg-stone-300 "
               >
                 <ChevronLeft className="h-4 w-4" /> Anterior
               </button>
@@ -787,7 +787,7 @@ export default function Invoices() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="flex items-center gap-1 rounded-lg px-3 py-1 text-sm text-stone-600 disabled:opacity-50 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800"
+                className="flex items-center gap-1 rounded-lg px-3 py-1 text-sm text-stone-400 disabled:opacity-50 hover:bg-stone-300"
               >
                 Próxima <ChevronRight className="h-4 w-4" />
               </button>
@@ -814,8 +814,7 @@ export default function Invoices() {
               onChange={(e) =>
                 setFormData({ ...formData, customerName: e.target.value })
               }
-              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
-               focus:bg-transparent"
+              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100  text-stone-400 focus:outline-none"
             />
           </div>
           <div>
@@ -830,8 +829,7 @@ export default function Invoices() {
               onChange={(e) =>
                 setFormData({ ...formData, total: parseFloat(e.target.value) })
               }
-              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
-               focus:bg-transparent"
+              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none"
             />
           </div>
           <div>
@@ -843,8 +841,8 @@ export default function Invoices() {
               onChange={(e) =>
                 setFormData({ ...formData, status: e.target.value as any })
               }
-              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
-               focus:bg-transparent"
+              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none 
+               "
             >
               {STATUS_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -865,8 +863,7 @@ export default function Invoices() {
                 onChange={(e) =>
                   setFormData({ ...formData, issueDate: e.target.value })
                 }
-                className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
-               focus:bg-transparent"
+                className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none"
               />
             </div>
             <div>
@@ -880,8 +877,7 @@ export default function Invoices() {
                 onChange={(e) =>
                   setFormData({ ...formData, dueDate: e.target.value })
                 }
-                className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
-               focus:bg-transparent"
+                className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none"
               />
             </div>
           </div>
@@ -895,7 +891,7 @@ export default function Invoices() {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
+              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none 
                focus:bg-transparent"
             />
           </div>
@@ -903,7 +899,7 @@ export default function Invoices() {
             <button
               type="button"
               onClick={() => setIsCreateModalOpen(false)}
-              className="rounded-lg border border-stone-400 px-4 py-2 text-sm font-medium text-stone-400 hover:bg-stone-400 hover:text-stone-300"
+              className="rounded-lg border border-stone-400 px-4 py-2 text-sm font-medium text-stone-400 hover:bg-stone-300 hover:text-stone-400"
             >
               Cancelar
             </button>
@@ -928,30 +924,30 @@ export default function Invoices() {
         {selectedInvoice && (
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="font-semibold text-stone-700">Número:</div>
-              <div className="text-stone-800">
+              <div className="font-semibold text-stone-400">Número:</div>
+              <div className="text-stone-400">
                 {selectedInvoice.invoiceNumber}
               </div>
-              <div className="font-semibold text-stone-700">Cliente:</div>
-              <div className="text-stone-800">
+              <div className="font-semibold text-stone-400">Cliente:</div>
+              <div className="text-stone-400">
                 {selectedInvoice.customerName}
               </div>
-              <div className="font-semibold text-stone-700">Total:</div>
-              <div className="text-stone-800">
+              <div className="font-semibold text-stone-400">Total:</div>
+              <div className="text-stone-400">
                 {formatCurrency(selectedInvoice.total)}
               </div>
-              <div className="font-semibold text-stone-700">Status:</div>
+              <div className="font-semibold text-stone-400">Status:</div>
               <div>{getStatusBadge(selectedInvoice.status)}</div>
-              <div className="font-semibold text-stone-700">Emissão:</div>
-              <div className="text-stone-800">
+              <div className="font-semibold text-stone-400">Emissão:</div>
+              <div className="text-stone-400">
                 {formatDate(selectedInvoice.issueDate)}
               </div>
-              <div className="font-semibold text-stone-700">Vencimento:</div>
-              <div className="text-stone-800">
+              <div className="font-semibold text-stone-400">Vencimento:</div>
+              <div className="text-stone-400">
                 {formatDate(selectedInvoice.dueDate)}
               </div>
-              <div className="font-semibold text-stone-700">Descrição:</div>
-              <div className="col-span-1 text-stone-700">
+              <div className="font-semibold text-stone-400">Descrição:</div>
+              <div className="col-span-1 text-stone-400">
                 {selectedInvoice.description}
               </div>
             </div>
@@ -976,8 +972,7 @@ export default function Invoices() {
               onChange={(e) =>
                 setFormData({ ...formData, customerName: e.target.value })
               }
-              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
-              focus:bg-transparent"
+              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none"
             />
           </div>
           <div>
@@ -993,13 +988,13 @@ export default function Invoices() {
               onChange={(e) =>
                 setFormData({ ...formData, total: parseFloat(e.target.value) })
               }
-              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
+              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none 
                focus:bg-transparent "
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium  text-stone-400 bg-stone-300">
+            <label className="block text-sm font-medium  text-stone-400">
               Status
             </label>
             <select
@@ -1007,8 +1002,7 @@ export default function Invoices() {
               onChange={(e) =>
                 setFormData({ ...formData, status: e.target.value as any })
               }
-              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
-              focus:bg-transparent "
+              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none"
             >
               {STATUS_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -1029,7 +1023,7 @@ export default function Invoices() {
                 onChange={(e) =>
                   setFormData({ ...formData, issueDate: e.target.value })
                 }
-                className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
+                className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none 
                 focus:bg-transparent "
               />
             </div>
@@ -1045,7 +1039,7 @@ export default function Invoices() {
                 onChange={(e) =>
                   setFormData({ ...formData, dueDate: e.target.value })
                 }
-                className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
+                className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none 
                 focus:bg-transparent "
               />
             </div>
@@ -1060,7 +1054,7 @@ export default function Invoices() {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-300 text-stone-400 focus:outline-none 
+              className="mt-1 w-full rounded-lg p-2 border border-stone-400 bg-stone-100 text-stone-400 focus:outline-none 
               focus:bg-transparent"
             />
           </div>
@@ -1068,7 +1062,7 @@ export default function Invoices() {
             <button
               type="button"
               onClick={() => setIsEditModalOpen(false)}
-              className="rounded-lg border border-stone-400 px-4 py-2 text-sm font-medium text-stone-400 hover:bg-stone-400 hover:text-stone-300"
+              className="rounded-lg border border-stone-400 px-4 py-2 text-sm font-medium text-stone-400 hover:bg-stone-300 hover:text-stone-400"
             >
               Cancelar
             </button>
