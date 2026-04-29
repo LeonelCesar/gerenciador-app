@@ -1,73 +1,20 @@
-// src/pages/InteractionsPage.tsx (com exclusão profissional)
-import { useEffect, useMemo, useState, FormEvent, useRef } from "react";
+// src/pages/InvoicesPage.tsx
+import { useEffect, useState, FormEvent, useRef, useCallback } from "react";
 import { formatCurrency } from "../../utils/formatters";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import {
+  invoiceService,
+  Invoice,
+  InvoiceStatus,
+  mockClients,
+} from "../../lib/invoiceMockData";
 
-/* TYPES */
-export type InteractionType = "payment" | "transfer" | "refund";
-export type InteractionStatus = "pending" | "completed" | "failed";
+/* 
+   COMPONENTES AUXILIARES (Modais, Badge, etc.)
+   Mantêm a estilização original
+ */
 
-export interface Interaction {
-  id: string;
-  user: string;
-  description: string;
-  type: InteractionType;
-  status: InteractionStatus;
-  amount: number;
-  createdAt: string;
-}
-
-/* ---------- MOCK DATA MELHORADO (10 USUÁRIOS ÚNICOS) ---------- */
-const USERS = [
-  "Leonel Helder",
-  "Lanira Neves",
-  "Eloa César",
-  "Cristeen Patrick",
-  "Elviess Rafael",
-  "Rita de Cássia Costa",
-  "José César",
-  "Alberto da Costa César",
-  "Henriqueta Bengui César",
-  "Adão Domingos Gonçalves Costa",
-];
-
-const DESCRIPTIONS = [
-  "Pagamento de fatura", "Assinatura mensal", "Reembolso solicitado", "Transferência entre contas",
-  "Compra de créditos", "Pagamento de serviço", "Taxa de manutenção", "Depósito garantia",
-  "Estorno de pagamento", "Comissão recebida", "Investimento realizado", "Resgate de investimento",
-];
-
-const TYPES: InteractionType[] = ["payment", "transfer", "refund"];
-const STATUSES: InteractionStatus[] = ["pending", "completed", "failed"];
-
-const mockInteractions: Interaction[] = Array.from({ length: 46 }).map((_, i) => {
-  const user = USERS[i % USERS.length];
-  const desc = DESCRIPTIONS[Math.floor(Math.random() * DESCRIPTIONS.length)];
-  const type = TYPES[Math.floor(Math.random() * TYPES.length)];
-  const status = STATUSES[Math.floor(Math.random() * STATUSES.length)];
-  const amount = Number((Math.random() * 2000 + 5).toFixed(2));
-  const daysAgo = Math.floor(Math.random() * 90);
-  return {
-    id: `itx_${1000 + i}`,
-    user,
-    description: `${desc} #${i + 1}`,
-    type,
-    status,
-    amount,
-    createdAt: new Date(Date.now() - daysAgo * 86400000).toISOString(),
-  };
-});
-
-export const formatDate = (iso: string | number | null | undefined): string => {
-  if (!iso) return "";
-  
-  const date = typeof iso === "number" ? new Date(iso) : new Date(String(iso));
-  if (isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("pt-PT");
-};
-
-/* ---------- MODAL BASE ---------- */
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -76,15 +23,28 @@ interface ModalProps {
   size?: "sm" | "md" | "lg";
 }
 
-const Modal = ({ isOpen, onClose, title, children, size = "md" }: ModalProps) => {
+const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  size = "md",
+}: ModalProps) => {
   if (!isOpen) return null;
   const sizeClasses = { sm: "max-w-md", md: "max-w-2xl", lg: "max-w-4xl" };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className={`w-full ${sizeClasses[size]} rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-900 max-h-[90vh] overflow-y-auto`}>
+      <div
+        className={`w-full ${sizeClasses[size]} rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto`}
+      >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h2>
-          <button onClick={onClose} className="rounded-full p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-600">✕</button>
+          <h2 className="text-xl font-semibold text-stone-800">{title}</h2>
+          <button
+            onClick={onClose}
+            className="rounded-lg border border-stone-400 px-4 py-2 text-stone-400 hover:bg-stone-300 hover:text-stone-400"
+          >
+            ✕
+          </button>
         </div>
         {children}
       </div>
@@ -92,35 +52,79 @@ const Modal = ({ isOpen, onClose, title, children, size = "md" }: ModalProps) =>
   );
 };
 
-/* ---------- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO (PROFISSIONAL) ---------- */
 interface ConfirmDeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  interactionDescription: string;
+  invoiceNumber: string;
   isLoading: boolean;
 }
 
-const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, interactionDescription, isLoading }: ConfirmDeleteModalProps) => {
+const ConfirmDeleteModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  invoiceNumber,
+  isLoading,
+}: ConfirmDeleteModalProps) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-900">
         <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <svg
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
           </svg>
           <h2 className="text-xl font-semibold">Confirmar exclusão</h2>
         </div>
         <p className="mt-4 text-gray-700 dark:text-gray-300">
-          Tem certeza que deseja excluir a interação <strong>{interactionDescription}</strong>? Esta ação não pode ser desfeita.
+          Tem certeza que deseja excluir a fatura{" "}
+          <strong>{invoiceNumber}</strong>? Esta ação não pode ser desfeita.
         </p>
         <div className="mt-6 flex justify-end gap-3">
-          <button onClick={onClose} className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-stone-50 dark:border-gray-700 dark:hover:bg-gray-800">
+          <button
+            onClick={onClose}
+            className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-stone-50"
+          >
             Cancelar
           </button>
-          <button onClick={onConfirm} disabled={isLoading} className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-70">
-            {isLoading && <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>}
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-70"
+          >
+            {isLoading && (
+              <svg
+                className="animate-spin h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            )}
             Excluir
           </button>
         </div>
@@ -129,82 +133,239 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, interactionDescription
   );
 };
 
-/* ---------- STATUS BADGE ---------- */
-function StatusBadge({ status }: { status: InteractionStatus }) {
+const StatusBadge = ({ status }: { status: InvoiceStatus }) => {
   const config = {
     pending: "bg-amber-100 text-amber-800 border-amber-200",
-    completed: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    failed: "bg-rose-100 text-rose-800 border-rose-200",
+    paid: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    overdue: "bg-rose-100 text-rose-800 border-rose-200",
+    cancelled: "bg-gray-100 text-gray-800 border-gray-200",
+  };
+  const labels = {
+    pending: "Pendente",
+    paid: "Pago",
+    overdue: "Vencido",
+    cancelled: "Cancelado",
   };
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium border ${config[status]}`}>
-      {status}
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium border ${config[status]}`}
+    >
+      {labels[status]}
     </span>
   );
+};
+
+/* ============================
+   FORMULÁRIO DE CRIAÇÃO/EDIÇÃO DE FATURA (SIMPLES)
+   Adaptado do formulário antigo, mas agora com cliente, itens, etc.
+   Mantém a mesma estética
+============================ */
+interface InvoiceFormData {
+  clientId: string;
+  items: Array<{ description: string; quantity: number; unitPrice: number }>;
+  issueDate: string;
+  dueDate: string;
+  status: InvoiceStatus;
 }
 
-/* ---------- FORMULÁRIO ---------- */
-interface InteractionFormProps {
-  initialData?: Partial<Interaction>;
-  onSubmit: (data: Omit<Interaction, "id" | "createdAt">) => void;
+interface InvoiceFormProps {
+  initialData?: Partial<Invoice>;
+  onSubmit: (
+    data: Omit<
+      Invoice,
+      | "id"
+      | "createdAt"
+      | "updatedAt"
+      | "invoiceNumber"
+      | "subtotal"
+      | "taxAmount"
+      | "totalAmount"
+      | "paymentReference"
+    >,
+  ) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
 }
 
-const InteractionForm = ({ initialData, onSubmit, onCancel, isSubmitting = false }: InteractionFormProps) => {
-  const [user, setUser] = useState(initialData?.user || "");
-  const [description, setDescription] = useState(initialData?.description || "");
-  const [type, setType] = useState<InteractionType>(initialData?.type || "payment");
-  const [status, setStatus] = useState<InteractionStatus>(initialData?.status || "pending");
-  const [amount, setAmount] = useState(initialData?.amount?.toString() || "");
+const InvoiceForm = ({
+  initialData,
+  onSubmit,
+  onCancel,
+  isSubmitting = false,
+}: InvoiceFormProps) => {
+  const [clientId, setClientId] = useState(
+    initialData?.client?.id || mockClients[0].id,
+  );
+  const [items, setItems] = useState(
+    initialData?.items?.map((i) => ({
+      description: i.description,
+      quantity: i.quantity,
+      unitPrice: i.unitPrice,
+    })) || [{ description: "", quantity: 1, unitPrice: 0 }],
+  );
+  const [issueDate, setIssueDate] = useState(
+    initialData?.issueDate || new Date().toISOString().split("T")[0],
+  );
+  const [dueDate, setDueDate] = useState(initialData?.dueDate || "");
+  const [status, setStatus] = useState<InvoiceStatus>(
+    initialData?.status || "pending",
+  );
+
+  const addItem = () =>
+    setItems([...items, { description: "", quantity: 1, unitPrice: 0 }]);
+  const removeItem = (idx: number) =>
+    setItems(items.filter((_, i) => i !== idx));
+  const updateItem = (idx: number, field: string, value: string | number) => {
+    const newItems = [...items];
+    newItems[idx] = { ...newItems[idx], [field]: value };
+    setItems(newItems);
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!user.trim() || !description.trim()) return alert("Preencha usuário e descrição");
+    const selectedClient = mockClients.find((c) => c.id === clientId);
+    if (!selectedClient) return;
+    const invoiceItems = items
+      .filter((i) => i.description.trim() !== "")
+      .map((i) => ({
+        id: `temp_${Date.now()}`,
+        description: i.description,
+        quantity: i.quantity,
+        unitPrice: i.unitPrice,
+        total: i.quantity * i.unitPrice,
+      }));
+    if (invoiceItems.length === 0) return alert("Adicione pelo menos um item.");
     onSubmit({
-      user: user.trim(),
-      description: description.trim(),
-      type,
+      client: selectedClient,
+      items: invoiceItems,
+      issueDate,
+      dueDate: dueDate || issueDate,
       status,
-      amount: parseFloat(amount) || 0,
+      notes: "",
+      paymentMethod: "multibanco",
+      taxRate: 0,
     });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-stone-700">Usuário *</label>
-        <input type="text" value={user} onChange={(e) => setUser(e.target.value)} className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 focus:border-blue-500 focus:outline-none" required />
+        <label className="block text-sm font-medium text-stone-700">
+          Cliente
+        </label>
+        <select
+          value={clientId}
+          onChange={(e) => setClientId(e.target.value)}
+          className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2"
+        >
+          {mockClients.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name} ({c.taxId})
+            </option>
+          ))}
+        </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-stone-700">Descrição *</label>
-        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 focus:border-blue-500 focus:outline-none" required />
+        <label className="block text-sm font-medium text-stone-700">
+          Itens da fatura
+        </label>
+        {items.map((item, idx) => (
+          <div key={idx} className="flex gap-2 mt-2 items-center">
+            <input
+              placeholder="Descrição"
+              value={item.description}
+              onChange={(e) => updateItem(idx, "description", e.target.value)}
+              className="flex-1 border border-stone-300 rounded px-2 py-1 text-sm"
+            />
+            <input
+              type="number"
+              placeholder="Qtd"
+              value={item.quantity}
+              onChange={(e) =>
+                updateItem(idx, "quantity", Number(e.target.value))
+              }
+              className="w-20 border border-stone-300 rounded px-2 py-1 text-sm"
+            />
+            <input
+              type="number"
+              step="0.01"
+              placeholder="€"
+              value={item.unitPrice}
+              onChange={(e) =>
+                updateItem(idx, "unitPrice", Number(e.target.value))
+              }
+              className="w-24 border border-stone-300 rounded px-2 py-1 text-sm"
+            />
+            <button
+              type="button"
+              onClick={() => removeItem(idx)}
+              className="text-red-500 text-sm"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={addItem}
+          className="mt-2 text-sm text-blue-600"
+        >
+          + Adicionar item
+        </button>
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-stone-700">Tipo</label>
-          <select value={type} onChange={(e) => setType(e.target.value as InteractionType)} className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2">
-            <option value="payment">Payment</option>
-            <option value="transfer">Transfer</option>
-            <option value="refund">Refund</option>
-          </select>
+          <label className="block text-sm font-medium text-stone-700">
+            Data de emissão
+          </label>
+          <input
+            type="date"
+            value={issueDate}
+            onChange={(e) => setIssueDate(e.target.value)}
+            className="mt-1 w-full border border-stone-300 rounded px-3 py-2"
+            required
+          />
         </div>
         <div>
-          <label className="block text-sm font-medium text-stone-700">Status</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value as InteractionStatus)} className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2">
-            <option value="pending">Pending</option>
-            <option value="completed">Completed</option>
-            <option value="failed">Failed</option>
-          </select>
+          <label className="block text-sm font-medium text-stone-700">
+            Data de vencimento
+          </label>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className="mt-1 w-full border border-stone-300 rounded px-3 py-2"
+          />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-stone-700">Valor (€)</label>
-          <input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2" placeholder="0.00" />
-        </div>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-stone-700">
+          Status
+        </label>
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value as InvoiceStatus)}
+          className="mt-1 w-full border border-stone-300 rounded px-3 py-2"
+        >
+          <option value="pending">Pendente</option>
+          <option value="paid">Pago</option>
+          <option value="overdue">Vencido</option>
+          <option value="cancelled">Cancelado</option>
+        </select>
       </div>
       <div className="flex justify-end gap-3 pt-2">
-        <button type="button" onClick={onCancel} className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-stone-50">Cancelar</button>
-        <button type="submit" disabled={isSubmitting} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-70">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-70"
+        >
           {isSubmitting ? "Salvando..." : "Salvar"}
         </button>
       </div>
@@ -212,69 +373,66 @@ const InteractionForm = ({ initialData, onSubmit, onCancel, isSubmitting = false
   );
 };
 
-/* ---------- COMPONENTE PRINCIPAL ---------- */
-export default function InteractionsPage() {
-  const [interactions, setInteractions] = useState<Interaction[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState("");
-  const [typeFilter, setTypeFilter] = useState<"all" | InteractionType>("all");
-  const [statusFilter, setStatusFilter] = useState<"all" | InteractionStatus>("all");
-  const [sortBy, setSortBy] = useState<"date_desc" | "date_asc" | "amount_desc" | "amount_asc">("date_desc");
+/*  COMPONENTE PRINCIPAL – LISTAGEM DE FATURA */
+export default function InvoicesPage() {
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | InvoiceStatus>(
+    "all",
+  );
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 10;
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editItem, setEditItem] = useState<Interaction | null>(null);
-  const [viewItem, setViewItem] = useState<Interaction | null>(null);
+  const [editItem, setEditItem] = useState<Invoice | null>(null);
+  const [viewItem, setViewItem] = useState<Invoice | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const viewDetailsRef = useRef<HTMLDivElement>(null);
 
-  // Estados para exclusão profissional
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; description: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    number: string;
+  } | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [toastMessage, setToastMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
-  // Carregar dados
-  useEffect(() => {
+  const PAGE_SIZE = 10;
+
+  // Carregar dados do serviço mock
+  const loadInvoices = useCallback(async () => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setInteractions(mockInteractions);
-      setLoading(false);
-    }, 350);
-    return () => clearTimeout(timer);
-  }, []);
+    const result = await invoiceService.getInvoices({
+      page,
+      pageSize: PAGE_SIZE,
+      search,
+      status: statusFilter,
+    });
+    setInvoices(result.data);
+    setTotalPages(result.totalPages);
+    setLoading(false);
+  }, [page, search, statusFilter]);
 
-  // Toast automático
+  useEffect(() => {
+    loadInvoices();
+  }, [loadInvoices]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(1);
+  }, [totalPages, page]);
+
   useEffect(() => {
     if (toastMessage) {
       const timer = setTimeout(() => setToastMessage(null), 3000);
       return () => clearTimeout(timer);
     }
   }, [toastMessage]);
-
-  // Filtros + ordenação
-  const filtered = useMemo(() => {
-    let list = [...interactions];
-    const q = query.trim().toLowerCase();
-    if (q) list = list.filter((it) => it.user.toLowerCase().includes(q) || it.description.toLowerCase().includes(q));
-    if (typeFilter !== "all") list = list.filter((it) => it.type === typeFilter);
-    if (statusFilter !== "all") list = list.filter((it) => it.status === statusFilter);
-    switch (sortBy) {
-      case "date_asc": list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()); break;
-      case "date_desc": list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); break;
-      case "amount_asc": list.sort((a, b) => a.amount - b.amount); break;
-      case "amount_desc": list.sort((a, b) => b.amount - a.amount); break;
-    }
-    return list;
-  }, [interactions, query, typeFilter, statusFilter, sortBy]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
-  }, [totalPages, page]);
 
   // Seleção em massa
   const toggleSelect = (id: string) => {
@@ -288,7 +446,7 @@ export default function InteractionsPage() {
   const selectAllCurrentPage = () => {
     setSelectedIds((prev) => {
       const copy = new Set(prev);
-      pageItems.forEach((it) => copy.add(it.id));
+      invoices.forEach((inv) => copy.add(inv.id));
       return copy;
     });
   };
@@ -296,26 +454,79 @@ export default function InteractionsPage() {
   const clearSelection = () => setSelectedIds(new Set());
 
   const archiveSelected = async () => {
-    if (!selectedIds.size) return;
-    setInteractions((prev) => prev.filter((it) => !selectedIds.has(it.id)));
+    // Simula arquivamento (não implementado no serviço, mas podemos apenas limpar seleção)
+    if (selectedIds.size === 0) return;
+    alert("Funcionalidade em desenvolvimento");
     clearSelection();
-    setToastMessage({ type: "success", text: "Interações arquivadas com sucesso!" });
   };
   const exportCSV = () => {
-    if (!selectedIds.size) return;
-
-    const rows = interactions.filter((it) => selectedIds.has(it.id));
-    const csv = ["id,user,description,type,status,amount,createdAt", ...rows.map((r) => `${r.id},${r.user},"${r.description}",${r.type},${r.status},${r.amount},${r.createdAt}`)].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `interactions_export_${Date.now()}.csv`;
-    a.click();
-    setToastMessage({ type: "success", text: "CSV exportado com sucesso!" });
+    if (selectedIds.size === 0) return;
+    alert("Funcionalidade em desenvolvimento");
   };
 
-  // Exportar PDF individual
-  const exportSinglePDF = async (interaction: Interaction) => {
+  // CRUD com o serviço mock
+  const handleCreate = async (data: any) => {
+    setIsSubmitting(true);
+    try {
+      const newInvoice = await invoiceService.createInvoice(data);
+      setInvoices((prev) => [newInvoice, ...prev]);
+      setShowCreateModal(false);
+      setToastMessage({ type: "success", text: "Fatura criada com sucesso!" });
+    } catch (error) {
+      setToastMessage({ type: "error", text: "Erro ao criar fatura." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdate = async (data: any) => {
+    if (!editItem) return;
+    setIsSubmitting(true);
+    try {
+      const updated = await invoiceService.updateInvoice(editItem.id, data);
+      if (updated) {
+        setInvoices((prev) =>
+          prev.map((inv) => (inv.id === editItem.id ? updated : inv)),
+        );
+        setEditItem(null);
+        setToastMessage({ type: "success", text: "Fatura atualizada!" });
+      }
+    } catch (error) {
+      setToastMessage({ type: "error", text: "Erro ao atualizar." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const openDeleteModal = (id: string, invoiceNumber: string) => {
+    setDeleteTarget({ id, number: invoiceNumber });
+    setIsDeleteModalOpen(true);
+  };
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleteLoading(true);
+    try {
+      const success = await invoiceService.deleteInvoice(deleteTarget.id);
+      if (success) {
+        setInvoices((prev) => prev.filter((inv) => inv.id !== deleteTarget.id));
+        setSelectedIds((prev) => {
+          const copy = new Set(prev);
+          copy.delete(deleteTarget.id);
+          return copy;
+        });
+        setToastMessage({ type: "success", text: "Fatura excluída!" });
+      }
+      setIsDeleteModalOpen(false);
+      setDeleteTarget(null);
+    } catch (error) {
+      setToastMessage({ type: "error", text: "Erro ao excluir." });
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  // Exportar PDF profissional usando os dados reais da fatura
+  const exportSinglePDF = async (invoice: Invoice) => {
     setIsExportingPDF(true);
     try {
       const element = document.createElement("div");
@@ -323,184 +534,274 @@ export default function InteractionsPage() {
       element.style.padding = "20px";
       element.style.backgroundColor = "white";
       element.style.fontFamily = "sans-serif";
+
+      const paymentRef = invoice.paymentReference
+        ? `${invoice.paymentReference.entity} ${invoice.paymentReference.reference}`
+        : "---";
+
       element.innerHTML = `
-        <div style="text-align: center; margin-bottom: 20px;">
-          <h1 style="color: #2563eb;">FlowBanck</h1>
-          <h2>Detalhes da Interação / Fatura</h2>
+        <div style="border-bottom: 2px solid #e5e7eb; padding-bottom: 16px; margin-bottom: 24px;">
+          <h1 style="font-size: 28px; font-weight: bold; color: #2563eb; margin: 0;">LC-Faturas</h1>
+          <p style="color: #6b7280; margin: 4px 0 0;">Soluções financeiras integradas</p>
         </div>
-        <div style="border-top: 2px solid #ccc; margin: 10px 0;"></div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div><strong>ID:</strong> ${interaction.id}</div>
-          <div><strong>Data:</strong> ${new Date(interaction.createdAt).toLocaleString("pt-PT")}</div>
-          <div><strong>Usuário:</strong> ${interaction.user}</div>
-          <div><strong>Tipo:</strong> ${interaction.type}</div>
-          <div><strong>Status:</strong> ${interaction.status}</div>
-          <div><strong>Valor:</strong> ${formatCurrency(interaction.amount)}</div>
-          <div style="grid-column: span 2;"><strong>Descrição:</strong> ${interaction.description}</div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 32px;">
+          <div>
+            <h2 style="font-size: 24px; font-weight: bold; margin: 0 0 8px;">FATURA</h2>
+            <p style="margin: 2px 0;"><strong>Nº:</strong> ${invoice.invoiceNumber}</p>
+            <p style="margin: 2px 0;"><strong>Data de emissão:</strong> ${new Date(invoice.issueDate).toLocaleDateString("pt-PT")}</p>
+            <p style="margin: 2px 0;"><strong>Data de vencimento:</strong> ${new Date(invoice.dueDate).toLocaleDateString("pt-PT")}</p>
+          </div>
+          <div style="text-align: right;">
+            <p style="margin: 2px 0;"><strong>Entidade:</strong> FlowBanck, Lda.</p>
+            <p style="margin: 2px 0;">NIPC: 923456780</p>
+            <p style="margin: 2px 0;">Rua Miguel Bombarda Nº 225 Barreiro/Lisboa</p>54a3
+          </div>
         </div>
-        <div style="border-top: 2px solid #ccc; margin-top: 20px; padding-top: 10px; text-align: center; font-size: 12px; color: #666;">
-          Documento gerado automaticamente em ${new Date().toLocaleString("pt-PT")}
+        <div style="background-color: #f9fafb; padding: 16px; border-radius: 12px; margin-bottom: 24px;">
+          <h3 style="margin: 0 0 8px; font-size: 16px;">Cliente</h3>
+          <p style="margin: 4px 0;"><strong>Nome:</strong> ${invoice.client.name}</p>
+          <p style="margin: 4px 0;"><strong>NIF/NIPC:</strong> ${invoice.client.taxId}</p>
+          <p style="margin: 4px 0;">${invoice.client.address || ""} ${invoice.client.postalCode || ""} ${invoice.client.city || ""}</p>
+          <p style="margin: 4px 0;">${invoice.client.email}</p>
+        </div>
+        <div style="background-color: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #bfdbfe;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-size: 12px; font-weight: bold; color: #1e40af;">REFERÊNCIA PARA PAGAMENTO</p>
+              <p style="font-size: 20px; font-family: monospace; font-weight: bold;">${paymentRef}</p>
+            </div>
+            <div style="text-align: right;">
+              <p style="font-size: 12px; color: #1e40af;">Valor a pagar</p>
+              <p style="font-size: 24px; font-weight: bold; color: #166534;">${formatCurrency(invoice.totalAmount)}</p>
+            </div>
+          </div>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+          <thead style="background-color: #f3f4f6;">
+            <tr><th style="text-align: left; padding: 10px;">Descrição</th><th style="text-align: right;">Qtd</th><th style="text-align: right;">Preço unit.</th><th style="text-align: right;">Total</th></tr>
+          </thead>
+          <tbody>
+            ${invoice.items
+              .map(
+                (item) => `
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${item.description}</td>
+                <td style="text-align: right;">${item.quantity}</td>
+                <td style="text-align: right;">${formatCurrency(item.unitPrice)}</td>
+                <td style="text-align: right;">${formatCurrency(item.total)}</td>
+              </tr>
+            `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <div style="text-align: right; width: 300px; margin-left: auto;">
+          <div style="display: flex; justify-content: space-between; padding: 6px 0;"><span>Subtotal:</span><span>${formatCurrency(invoice.subtotal)}</span></div>
+          <div style="display: flex; justify-content: space-between; padding: 6px 0;"><span>IVA (${invoice.taxRate}%):</span><span>${formatCurrency(invoice.taxAmount)}</span></div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; font-weight: bold; font-size: 18px; border-top: 2px solid #e5e7eb;"><span>TOTAL:</span><span>${formatCurrency(invoice.totalAmount)}</span></div>
+        </div>
+        <div style="border-top: 1px solid #e5e7eb; margin-top: 32px; padding-top: 16px; text-align: center; font-size: 12px; color: #9ca3af;">
+          Documento gerado eletronicamente em ${new Date().toLocaleString("pt-PT")}
         </div>
       `;
       document.body.appendChild(element);
-      const canvas = await html2canvas(element, { scale: 2, backgroundColor: "#ffffff" });
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+      });
       document.body.removeChild(element);
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       const imgWidth = 180;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       pdf.addImage(imgData, "PNG", 15, 15, imgWidth, imgHeight);
-      pdf.save(`fatura_${interaction.id}_${Date.now()}.pdf`);
+      pdf.save(`fatura_${invoice.invoiceNumber.replace(/\s/g, "_")}.pdf`);
       setToastMessage({ type: "success", text: "PDF gerado com sucesso!" });
     } catch (error) {
-      console.error("Erro ao gerar PDF", error);
+      console.error(error);
       setToastMessage({ type: "error", text: "Falha ao gerar PDF." });
     } finally {
       setIsExportingPDF(false);
     }
   };
 
-  // CRUD
-  const handleCreate = (data: Omit<Interaction, "id" | "createdAt">) => {
-    setIsSubmitting(true);
-    setTimeout(() => {
-      const newItem: Interaction = { id: `itx_${Math.floor(Math.random() * 100000)}`, ...data, createdAt: new Date().toISOString() };
-      setInteractions((prev) => [newItem, ...prev]);
-      setShowCreateModal(false);
-      setIsSubmitting(false);
-      setToastMessage({ type: "success", text: "Interação criada com sucesso!" });
-    }, 500);
-  };
-
-  const handleUpdate = (data: Omit<Interaction, "id" | "createdAt">) => {
-    if (!editItem) return;
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setInteractions((prev) => prev.map((it) => (it.id === editItem.id ? { ...it, ...data, createdAt: it.createdAt } : it)));
-      setEditItem(null);
-      setIsSubmitting(false);
-      setToastMessage({ type: "success", text: "Interação atualizada!" });
-    }, 500);
-  };
-
-  // Exclusão profissional
-  const openDeleteModal = (id: string, description: string) => {
-    setDeleteTarget({ id, description });
-    setIsDeleteModalOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteTarget) return;
-    setDeleteLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setInteractions((prev) => prev.filter((it) => it.id !== deleteTarget.id));
-      setSelectedIds((prev) => {
-        const copy = new Set(prev);
-        copy.delete(deleteTarget.id);
-        return copy;
-      });
-      setToastMessage({ type: "success", text: "Interação excluída com sucesso!" });
-      setIsDeleteModalOpen(false);
-      setDeleteTarget(null);
-    } catch (error) {
-      setToastMessage({ type: "error", text: "Erro ao excluir interação." });
-    } finally {
-      setDeleteLoading(false);
-    }
-  };
-
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {/* Toast */}
       {toastMessage && (
-        <div className={`fixed top-4 right-4 z-50 rounded-lg p-3 text-sm font-medium shadow-lg ${toastMessage.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+        <div
+          className={`fixed top-4 right-4 z-50 rounded-lg p-3 text-sm font-medium shadow-lg ${toastMessage.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+        >
           {toastMessage.text}
         </div>
       )}
 
       <header className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-stone-800">Interações</h1>
-          <p className="text-sm text-stone-500">Monitore e gerencie as interações dos usuários.</p>
+          <h1 className="text-2xl font-semibold text-stone-500">Faturas</h1>
+          <p className="text-sm text-stone-400">Gerencie as faturas emitidas</p>
         </div>
-        <button onClick={() => setShowCreateModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-blue-700 transition">+ Nova Interação</button>
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-blue-700 transition"
+        >
+          + Nova Fatura
+        </button>
       </header>
 
       {/* Filtros */}
       <section className="rounded-md mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <input value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} placeholder="Buscar por usuário ou descrição..." className="border border-stone-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none" />
-        <div className="flex gap-3">
-          <select value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value as any); setPage(1); }} className="border border-stone-300 rounded-lg px-3 py-2 text-sm">
-            <option value="all">Todos os tipos</option>
-            <option value="payment">Payment</option>
-            <option value="transfer">Transfer</option>
-            <option value="refund">Refund</option>
-          </select>
-          <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value as any); setPage(1); }} className="border border-stone-300 rounded-lg px-3 py-2 text-sm">
-            <option value="all">Todos os status</option>
-            <option value="pending">Pending</option>
-            <option value="completed">Completed</option>
-            <option value="failed">Failed</option>
-          </select>
-        </div>
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)} className="border border-stone-300 rounded-lg px-3 py-2 text-sm">
-          <option value="date_desc">Mais recentes</option>
-          <option value="date_asc">Mais antigas</option>
-          <option value="amount_desc">Maior valor</option>
-          <option value="amount_asc">Menor valor</option>
+        <input
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          placeholder="Buscar por cliente, NIF ou número da fatura..."
+          className="border border-stone-400 placeholder:text-stone-400 bg-stone-100 rounded-lg px-3 py-2 text-sm focus:outline-none"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value as any);
+            setPage(1);
+          }}
+          className="border border-stone-400 bg-stone-100 rounded-lg px-3 py-2 text-sm"
+        >
+          <option value="all">Todos os status</option>
+          <option value="pending">Pendente</option>
+          <option value="paid">Pago</option>
+          <option value="overdue">Vencido</option>
+          <option value="cancelled">Cancelado</option>
         </select>
+        {/* Espaço vazio para manter o grid */}
+        <div></div>
       </section>
 
       {/* Ações em massa */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
-          <button onClick={selectAllCurrentPage} className="text-sm px-3 py-1 border border-stone-300 rounded-lg hover:bg-stone-50">Selecionar página</button>
-          <button onClick={clearSelection} className="text-sm px-3 py-1 border border-stone-300 rounded-lg hover:bg-stone-50">Limpar</button>
-          <span className="text-sm text-stone-500">{selectedIds.size} selecionado(s)</span>
+          <button
+            onClick={selectAllCurrentPage}
+            className="text-sm px-3 py-1 border border-stone-400 rounded-lg"
+          >
+            Selecionar página
+          </button>
+          <button
+            onClick={clearSelection}
+            className="text-sm px-3 py-1 border border-stone-400 rounded-lg"
+          >
+            Limpar
+          </button>
+          <span className="text-sm text-stone-500">
+            {selectedIds.size} selecionado(s)
+          </span>
         </div>
         <div className="flex gap-2">
-          <button onClick={archiveSelected} className="text-sm px-3 py-1 border border-stone-300 rounded-lg hover:bg-stone-50">Arquivar</button>
-          <button onClick={exportCSV} className="text-sm px-3 py-1 border border-stone-300 rounded-lg hover:bg-stone-50">Exportar CSV</button>
+          <button
+            onClick={archiveSelected}
+            className="text-sm px-3 py-1 border border-stone-400 rounded-lg"
+          >
+            Arquivar
+          </button>
+          <button
+            onClick={exportCSV}
+            className="text-sm px-3 py-1 border border-stone-400 rounded-lg"
+          >
+            Exportar CSV
+          </button>
         </div>
       </div>
 
       {/* Tabela */}
-      <div className="bg-white shadow-sm rounded-md overflow-hidden border border-stone-200">
+      <div className="bg-white shadow-sm rounded-md overflow-hidden border border-stone-400">
         <div className="overflow-x-auto">
           <table className="w-full table-fixed text-sm">
-            <thead className="bg-stone-100 text-stone-700 border-b border-stone-200">
+            <thead className="bg-stone-100 text-stone-400 border-b border-stone-200">
               <tr>
-                <th className="p-3 w-8"><input type="checkbox" checked={pageItems.length > 0 && pageItems.every(it => selectedIds.has(it.id))} onChange={(e) => e.target.checked ? selectAllCurrentPage() : clearSelection()} /></th>
-                <th className="p-3 text-left">Usuário</th>
+                <th className="p-3 w-8">
+                  <input
+                    type="checkbox"
+                    checked={
+                      invoices.length > 0 &&
+                      invoices.every((inv) => selectedIds.has(inv.id))
+                    }
+                    onChange={(e) =>
+                      e.target.checked
+                        ? selectAllCurrentPage()
+                        : clearSelection()
+                    }
+                  />
+                </th>
+                <th className="p-3 text-left">Nº Fatura</th>
+                <th className="p-3 text-left">Cliente</th>
                 <th className="p-3 text-left">Descrição</th>
-                <th className="p-3 text-left">Tipo</th>
-                <th className="p-3 text-left">Status</th>
                 <th className="p-3 text-right">Valor</th>
-                <th className="p-3 text-left">Data</th>
+                <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Data Emissão</th>
                 <th className="p-3 text-center">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
               {loading ? (
-                <tr><td colSpan={8} className="p-6 text-center text-stone-500">Carregando...</td></tr>
-              ) : pageItems.length === 0 ? (
-                <tr><td colSpan={8} className="p-6 text-center text-stone-500">Nenhuma interação encontrada.</td></tr>
+                <tr>
+                  <td colSpan={8} className="p-6 text-center text-stone-500">
+                    Carregando...
+                  </td>
+                </tr>
+              ) : invoices.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="p-6 text-center text-stone-500">
+                    Nenhuma fatura encontrada.
+                  </td>
+                </tr>
               ) : (
-                pageItems.map((it) => (
-                  <tr key={it.id} className="hover:bg-stone-50 transition">
-                    <td className="p-3 text-center"><input type="checkbox" checked={selectedIds.has(it.id)} onChange={() => toggleSelect(it.id)} /></td>
-                    <td className="p-3 font-medium text-stone-800">{it.user}</td>
-                    <td className="p-3 text-stone-600 truncate max-w-xs">{it.description}</td>
-                    <td className="p-3 capitalize">{it.type}</td>
-                    <td className="p-3"><StatusBadge status={it.status} /></td>
-                    <td className="p-3 text-right font-semibold">{formatCurrency(it.amount)}</td>
-                    <td className="p-3 text-stone-500">{formatDate(it.createdAt)}</td>
+                invoices.map((inv) => (
+                  <tr key={inv.id} className="hover:bg-stone-50 transition">
+                    <td className="p-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(inv.id)}
+                        onChange={() => toggleSelect(inv.id)}
+                      />
+                    </td>
+                    <td className="p-3 font-medium text-stone-800">
+                      {inv.invoiceNumber}
+                    </td>
+                    <td className="p-3 text-stone-600">{inv.client.name}</td>
+                    <td className="p-3 text-stone-500 truncate max-w-xs">
+                      {inv.items.map((i) => i.description).join(", ")}
+                    </td>
+                    <td className="p-3 text-right font-semibold">
+                      {formatCurrency(inv.totalAmount)}
+                    </td>
+                    <td className="p-3">
+                      <StatusBadge status={inv.status} />
+                    </td>
+                    <td className="p-3 text-stone-500">
+                      {new Date(inv.issueDate).toLocaleDateString("pt-PT")}
+                    </td>
                     <td className="p-3">
                       <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => setViewItem(it)} className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 border border-blue-200 rounded">Ver</button>
-                        <button onClick={() => setEditItem(it)} className="text-amber-600 hover:text-amber-800 text-xs px-2 py-1 border border-amber-200 rounded">Editar</button>
-                        <button onClick={() => openDeleteModal(it.id, it.description)} className="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-200 rounded">Excluir</button>
+                        <button
+                          onClick={() => setViewItem(inv)}
+                          className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 border border-blue-200 rounded"
+                        >
+                          Ver
+                        </button>
+                        <button
+                          onClick={() => setEditItem(inv)}
+                          className="text-amber-600 hover:text-amber-800 text-xs px-2 py-1 border border-amber-200 rounded"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() =>
+                            openDeleteModal(inv.id, inv.invoiceNumber)
+                          }
+                          className="text-red-600 hover:text-red-800 text-xs px-2 py-1 border border-red-200 rounded"
+                        >
+                          Excluir
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -513,42 +814,180 @@ export default function InteractionsPage() {
 
       {/* Paginação */}
       <footer className="flex items-center justify-between mt-4">
-        <div className="text-sm text-stone-500">Mostrando {(page - 1) * PAGE_SIZE + 1} - {Math.min(page * PAGE_SIZE, filtered.length)} de {filtered.length}</div>
+        <div className="text-sm text-stone-500">
+          Página {page} de {totalPages}
+        </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setPage(p => Math.max(1, p - 1))} className="px-3 py-1 border border-stone-300 rounded-lg hover:bg-stone-50">Anterior</button>
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            className="px-3 py-1 border border-stone-300 rounded-lg hover:bg-stone-50"
+          >
+            Anterior
+          </button>
           <span className="text-sm">Página</span>
-          <input className="w-16 text-center border border-stone-300 rounded-lg px-2 py-1" value={page} onChange={(e) => { const v = Number(e.target.value); setPage(isNaN(v) ? 1 : Math.max(1, Math.min(totalPages, v))); }} />
+          <input
+            className="w-16 text-center border border-stone-300 rounded-lg px-2 py-1"
+            value={page}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setPage(isNaN(v) ? 1 : Math.min(totalPages, Math.max(1, v)));
+            }}
+          />
           <span className="text-sm">de {totalPages}</span>
-          <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="px-3 py-1 border border-stone-300 rounded-lg hover:bg-stone-50">Próxima</button>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            className="px-3 py-1 border border-stone-300 rounded-lg hover:bg-stone-50"
+          >
+            Próxima
+          </button>
         </div>
       </footer>
 
       {/* Modais */}
-      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Nova Interação">
-        <InteractionForm onSubmit={handleCreate} onCancel={() => setShowCreateModal(false)} isSubmitting={isSubmitting} />
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        title="Nova Fatura"
+      >
+        <InvoiceForm
+          onSubmit={handleCreate}
+          onCancel={() => setShowCreateModal(false)}
+          isSubmitting={isSubmitting}
+        />
+      </Modal>
+      <Modal
+        isOpen={!!editItem}
+        onClose={() => setEditItem(null)}
+        title="Editar Fatura"
+      >
+        {editItem && (
+          <InvoiceForm
+            initialData={editItem}
+            onSubmit={handleUpdate}
+            onCancel={() => setEditItem(null)}
+            isSubmitting={isSubmitting}
+          />
+        )}
       </Modal>
 
-      <Modal isOpen={!!editItem} onClose={() => setEditItem(null)} title="Editar Interação">
-        {editItem && <InteractionForm initialData={editItem} onSubmit={handleUpdate} onCancel={() => setEditItem(null)} isSubmitting={isSubmitting} />}
-      </Modal>
-
-      <Modal isOpen={!!viewItem} onClose={() => setViewItem(null)} title="Detalhes da Fatura" size="md">
+      {/* Modal de visualização da fatura (com layout profissional) */}
+      <Modal
+        isOpen={!!viewItem}
+        onClose={() => setViewItem(null)}
+        title="Detalhes da Fatura"
+        size="lg"
+      >
         {viewItem && (
           <div>
-            <div ref={viewDetailsRef} className="space-y-4 p-2">
-              <div className="border-b pb-2"><h3 className="text-lg font-semibold text-center text-stone-800">FlowBanck - Fatura</h3></div>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="font-semibold text-stone-600">ID da Interação:</div><div className="text-stone-800 font-mono">{viewItem.id}</div>
-                <div className="font-semibold text-stone-600">Usuário:</div><div className="text-stone-800">{viewItem.user}</div>
-                <div className="font-semibold text-stone-600">Descrição:</div><div className="text-stone-800">{viewItem.description}</div>
-                <div className="font-semibold text-stone-600">Tipo:</div><div className="capitalize text-stone-800">{viewItem.type}</div>
-                <div className="font-semibold text-stone-600">Status:</div><div><StatusBadge status={viewItem.status} /></div>
-                <div className="font-semibold text-stone-600">Valor:</div><div className="font-bold text-lg text-green-700">{formatCurrency(viewItem.amount)}</div>
-                <div className="font-semibold text-stone-600">Data de emissão:</div><div>{new Date(viewItem.createdAt).toLocaleString("pt-PT")}</div>
+            <div ref={viewDetailsRef} className="space-y-6 p-2">
+              <div className="flex justify-between items-start border-b pb-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-stone-800">FATURA</h3>
+                  <p className="text-sm text-stone-500">
+                    Nº {viewItem.invoiceNumber}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-stone-500">Data de emissão</div>
+                  <div className="font-medium">
+                    {new Date(viewItem.issueDate).toLocaleDateString("pt-PT")}
+                  </div>
+                  <div className="text-sm text-stone-500 mt-1">
+                    Data de vencimento
+                  </div>
+                  <div className="font-medium">
+                    {new Date(viewItem.dueDate).toLocaleDateString("pt-PT")}
+                  </div>
+                </div>
+              </div>
+              <div className="bg-stone-50 p-4 rounded-lg grid grid-cols-2 gap-3 text-sm">
+                <div className="font-semibold">Cliente</div>
+                <div>{viewItem.client.name}</div>
+                <div className="font-semibold">NIF/NIPC</div>
+                <div className="font-mono">{viewItem.client.taxId}</div>
+                {viewItem.client.email && (
+                  <>
+                    <div className="font-semibold">Email</div>
+                    <div>{viewItem.client.email}</div>
+                  </>
+                )}
+                {viewItem.client.address && (
+                  <>
+                    <div className="font-semibold">Morada</div>
+                    <div>
+                      {viewItem.client.address}, {viewItem.client.city}
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 flex justify-between items-center">
+                <div>
+                  <div className="text-xs font-bold text-blue-700">
+                    Referência Multibanco
+                  </div>
+                  <div className="text-xl font-mono font-bold">
+                    {viewItem.paymentReference?.entity}{" "}
+                    {viewItem.paymentReference?.reference}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-blue-700">Valor total</div>
+                  <div className="text-2xl font-bold text-green-700">
+                    {formatCurrency(viewItem.totalAmount)}
+                  </div>
+                </div>
+              </div>
+              <table className="min-w-full text-sm">
+                <thead className="bg-stone-100">
+                  <tr>
+                    <th className="text-left p-2">Descrição</th>
+                    <th className="text-right p-2">Qtd</th>
+                    <th className="text-right p-2">Preço</th>
+                    <th className="text-right p-2">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {viewItem.items.map((item, idx) => (
+                    <tr key={idx} className="border-b">
+                      <td className="p-2">{item.description}</td>
+                      <td className="text-right p-2">{item.quantity}</td>
+                      <td className="text-right p-2">
+                        {formatCurrency(item.unitPrice)}
+                      </td>
+                      <td className="text-right p-2 font-medium">
+                        {formatCurrency(item.total)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="border-t pt-4 text-right space-y-1">
+                <div className="flex justify-end gap-8 text-sm">
+                  <span>Subtotal</span>
+                  <span className="w-32">
+                    {formatCurrency(viewItem.subtotal)}
+                  </span>
+                </div>
+                <div className="flex justify-end gap-8 text-sm">
+                  <span>IVA ({viewItem.taxRate}%)</span>
+                  <span className="w-32">
+                    {formatCurrency(viewItem.taxAmount)}
+                  </span>
+                </div>
+                <div className="flex justify-end gap-8 text-lg font-bold">
+                  <span>Total</span>
+                  <span className="w-32 text-green-700">
+                    {formatCurrency(viewItem.totalAmount)}
+                  </span>
+                </div>
               </div>
             </div>
             <div className="mt-6 flex justify-end">
-              <button onClick={() => exportSinglePDF(viewItem)} disabled={isExportingPDF} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-70">
+              <button
+                onClick={() => exportSinglePDF(viewItem)}
+                disabled={isExportingPDF}
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-70"
+              >
                 {isExportingPDF ? "Gerando PDF..." : "📄 Exportar Fatura (PDF)"}
               </button>
             </div>
@@ -556,12 +995,11 @@ export default function InteractionsPage() {
         )}
       </Modal>
 
-      {/* Modal de confirmação de exclusão profissional */}
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        interactionDescription={deleteTarget?.description || ""}
+        invoiceNumber={deleteTarget?.number || ""}
         isLoading={deleteLoading}
       />
     </div>

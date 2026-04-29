@@ -705,7 +705,7 @@ export default function Invoices() {
                   <th className="p-3 font-medium text-center text-stone-500">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+              <tbody className="divide-y divide-stone-400">
                 {paginatedInvoices.map((inv) => (
                   <tr
                     key={inv.id}
