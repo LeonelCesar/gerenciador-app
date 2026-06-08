@@ -1,4 +1,3 @@
-// src/pages/InvoicesPage.tsx
 import { useEffect, useState, FormEvent, useRef, useCallback } from "react";
 import { formatCurrency } from "../../utils/formatters";
 import { jsPDF } from "jspdf";
@@ -10,10 +9,7 @@ import {
   mockClients,
 } from "../../lib/invoiceMockData";
 
-/* 
-   COMPONENTES AUXILIARES (Modais, Badge, etc.)
-   Mantêm a estilização original
- */
+/*  COMPONENTES AUXILIARES (Modais, Badge, etc.) Mantêm a estilização original  */
 
 interface ModalProps {
   isOpen: boolean;
@@ -33,7 +29,7 @@ const Modal = ({
   if (!isOpen) return null;
   const sizeClasses = { sm: "max-w-md", md: "max-w-2xl", lg: "max-w-4xl" };
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 ">
       <div
         className={`w-full ${sizeClasses[size]} rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto`}
       >
@@ -155,11 +151,11 @@ const StatusBadge = ({ status }: { status: InvoiceStatus }) => {
   );
 };
 
-/* ============================
+/*
    FORMULÁRIO DE CRIAÇÃO/EDIÇÃO DE FATURA (SIMPLES)
    Adaptado do formulário antigo, mas agora com cliente, itens, etc.
    Mantém a mesma estética
-============================ */
+*/
 interface InvoiceFormData {
   clientId: string;
   items: Array<{ description: string; quantity: number; unitPrice: number }>;
@@ -250,13 +246,13 @@ const InvoiceForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-stone-400">
           Cliente
         </label>
         <select
           value={clientId}
           onChange={(e) => setClientId(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2"
+          className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none"
         >
           {mockClients.map((c) => (
             <option key={c.id} value={c.id}>
@@ -266,7 +262,7 @@ const InvoiceForm = ({
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-stone-400">
           Itens da fatura
         </label>
         {items.map((item, idx) => (
@@ -275,7 +271,7 @@ const InvoiceForm = ({
               placeholder="Descrição"
               value={item.description}
               onChange={(e) => updateItem(idx, "description", e.target.value)}
-              className="flex-1 border border-stone-300 rounded px-2 py-1 text-sm"
+              className="flex-1 border border-stone-300 rounded px-2 py-1 text-sm focus:outline-none"
             />
             <input
               type="number"
@@ -284,7 +280,7 @@ const InvoiceForm = ({
               onChange={(e) =>
                 updateItem(idx, "quantity", Number(e.target.value))
               }
-              className="w-20 border border-stone-300 rounded px-2 py-1 text-sm"
+              className="w-20 border border-stone-300 rounded px-2 py-1 text-sm focus:outline-none"
             />
             <input
               type="number"
@@ -294,7 +290,7 @@ const InvoiceForm = ({
               onChange={(e) =>
                 updateItem(idx, "unitPrice", Number(e.target.value))
               }
-              className="w-24 border border-stone-300 rounded px-2 py-1 text-sm"
+              className="w-24 border border-stone-300 rounded px-2 py-1 text-sm focus:outline-none"
             />
             <button
               type="button"
@@ -315,37 +311,37 @@ const InvoiceForm = ({
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-stone-700">
+          <label className="block text-sm font-medium text-stone-400">
             Data de emissão
           </label>
           <input
             type="date"
             value={issueDate}
             onChange={(e) => setIssueDate(e.target.value)}
-            className="mt-1 w-full border border-stone-300 rounded px-3 py-2"
+            className="mt-1 w-full border border-stone-300 rounded px-3 py-2 focus:outline-none"
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-stone-700">
+          <label className="block text-sm font-medium text-stone-400 focus:outline-none">
             Data de vencimento
           </label>
           <input
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="mt-1 w-full border border-stone-300 rounded px-3 py-2"
+            className="mt-1 w-full border border-stone-300 rounded px-3 py-2 focus:outline-none"
           />
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-stone-400">
           Status
         </label>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as InvoiceStatus)}
-          className="mt-1 w-full border border-stone-300 rounded px-3 py-2"
+          className="mt-1 w-full border border-stone-300 rounded px-3 py-2 focus:outline-none"
         >
           <option value="pending">Pendente</option>
           <option value="paid">Pago</option>
@@ -374,7 +370,7 @@ const InvoiceForm = ({
 };
 
 /*  COMPONENTE PRINCIPAL – LISTAGEM DE FATURA */
-export default function InvoicesPage() {
+export default function interactionsPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -547,14 +543,14 @@ export default function InvoicesPage() {
         <div style="display: flex; justify-content: space-between; margin-bottom: 32px;">
           <div>
             <h2 style="font-size: 24px; font-weight: bold; margin: 0 0 8px;">FATURA</h2>
-            <p style="margin: 2px 0;"><strong>Nº:</strong> ${invoice.invoiceNumber}</p>
+            <p style="margin: 2px 0;"><strong>Nº</strong> ${invoice.invoiceNumber}</p>
             <p style="margin: 2px 0;"><strong>Data de emissão:</strong> ${new Date(invoice.issueDate).toLocaleDateString("pt-PT")}</p>
             <p style="margin: 2px 0;"><strong>Data de vencimento:</strong> ${new Date(invoice.dueDate).toLocaleDateString("pt-PT")}</p>
           </div>
           <div style="text-align: right;">
-            <p style="margin: 2px 0;"><strong>Entidade:</strong> FlowBanck, Lda.</p>
+            <p style="margin: 2px 0;"><strong>Entidade:</strong> Leonel César, Lda.</p>
             <p style="margin: 2px 0;">NIPC: 923456780</p>
-            <p style="margin: 2px 0;">Rua Miguel Bombarda Nº 225 Barreiro/Lisboa</p>54a3
+            <p style="margin: 2px 0;">Rua Miguel Bombarda Nº 225 Barreiro/Lisboa</p>
           </div>
         </div>
         <div style="background-color: #f9fafb; padding: 16px; border-radius: 12px; margin-bottom: 24px;">
@@ -713,7 +709,7 @@ export default function InvoicesPage() {
       </div>
 
       {/* Tabela */}
-      <div className="bg-white shadow-sm rounded-md overflow-hidden border border-stone-400">
+      <div className="shadow-sm rounded-md overflow-hidden border border-stone-400">
         <div className="overflow-x-auto">
           <table className="w-full table-fixed text-sm">
             <thead className="bg-stone-100 text-stone-400 border-b border-stone-200">
@@ -764,20 +760,20 @@ export default function InvoicesPage() {
                         onChange={() => toggleSelect(inv.id)}
                       />
                     </td>
-                    <td className="p-3 font-medium text-stone-800">
+                    <td className="p-3 font-medium text-stone-400">
                       {inv.invoiceNumber}
                     </td>
-                    <td className="p-3 text-stone-600">{inv.client.name}</td>
-                    <td className="p-3 text-stone-500 truncate max-w-xs">
+                    <td className="p-3 text-stone-400">{inv.client.name}</td>
+                    <td className="p-3 text-stone-400 truncate max-w-xs">
                       {inv.items.map((i) => i.description).join(", ")}
                     </td>
-                    <td className="p-3 text-right font-semibold">
+                    <td className="p-3 text-right font-semibold text-stone-400">
                       {formatCurrency(inv.totalAmount)}
                     </td>
                     <td className="p-3">
                       <StatusBadge status={inv.status} />
                     </td>
-                    <td className="p-3 text-stone-500">
+                    <td className="p-3 text-stone-400">
                       {new Date(inv.issueDate).toLocaleDateString("pt-PT")}
                     </td>
                     <td className="p-3">
@@ -870,7 +866,7 @@ export default function InvoicesPage() {
         )}
       </Modal>
 
-      {/* Modal de visualização da fatura (com layout profissional) */}
+      {/* Modal de visualização da fatura (com layout profissional pdf) */}
       <Modal
         isOpen={!!viewItem}
         onClose={() => setViewItem(null)}
@@ -882,7 +878,7 @@ export default function InvoicesPage() {
             <div ref={viewDetailsRef} className="space-y-6 p-2">
               <div className="flex justify-between items-start border-b pb-4">
                 <div>
-                  <h3 className="text-2xl font-bold text-stone-800">FATURA</h3>
+                  <h3 className="text-2xl font-bold text-stone-500">FATURA</h3>
                   <p className="text-sm text-stone-500">
                     Nº {viewItem.invoiceNumber}
                   </p>

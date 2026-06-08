@@ -1,4 +1,3 @@
-// src/components/AccountToggle.tsx
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, ChevronUp, User, Settings, LogOut, Shield, HelpCircle } from 'lucide-react';
 

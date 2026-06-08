@@ -52,54 +52,56 @@ interface Customer {
 type SortField = 'name' | 'createdAt' | 'invoiceCount';
 type SortOrder = 'asc' | 'desc';
 
-// ---------- Dados mockados para faturas e clientes por pasta ----------
+// Dados mockados para faturas e clientes por pasta 
+
 const mockInvoicesByFolder: Record<string, Invoice[]> = {
   '1': [
-    { id: 'inv1', number: 'FAT-2025-001', customerName: 'Empresa Alpha', amount: 1250.00, status: 'paid', dueDate: '2025-02-15' },
-    { id: 'inv2', number: 'FAT-2025-002', customerName: 'Beta Soluções', amount: 890.50, status: 'pending', dueDate: '2025-03-20' },
-    { id: 'inv3', number: 'FAT-2025-003', customerName: 'Gamma Ltda', amount: 2340.00, status: 'paid', dueDate: '2025-03-10' },
-    { id: 'inv4', number: 'FAT-2025-004', customerName: 'Delta Comércio', amount: 560.75, status: 'overdue', dueDate: '2025-02-28' },
+    { id: 'FT_1', number: 'FAT-2025-001', customerName: 'Sonangol Angola', amount: 1250.00, status: 'paid', dueDate: '2025-02-15' },
+    { id: 'FT_2', number: 'FAT-2025-002', customerName: 'Odebrestch Brasil', amount: 890.50, status: 'pending', dueDate: '2025-03-20' },
+    { id: 'FT_3', number: 'FAT-2025-003', customerName: 'Endiaama Alemanha', amount: 2340.00, status: 'paid', dueDate: '2025-03-10' },
+    { id: 'FT_4', number: 'FAT-2025-004', customerName: 'Prado Restaurante', amount: 560.75, status: 'overdue', dueDate: '2025-02-28' },
   ],
   '2': [
-    { id: 'inv5', number: 'FAT-2025-005', customerName: 'Omega Corp', amount: 5000.00, status: 'paid', dueDate: '2025-01-10' },
-    { id: 'inv6', number: 'FAT-2025-006', customerName: 'Sigma Inc', amount: 3200.00, status: 'paid', dueDate: '2025-02-05' },
+    { id: 'FT_5', number: 'FAT-2025-005', customerName: 'Primafrio Múrcia', amount: 5000.00, status: 'paid', dueDate: '2025-01-10' },
+    { id: 'FT_6', number: 'FAT-2025-006', customerName: 'MEO Comunicações', amount: 3200.00, status: 'paid', dueDate: '2025-02-05' },
   ],
   '3': [
-    { id: 'inv7', number: 'FAT-2025-007', customerName: 'TechStart', amount: 450.00, status: 'pending', dueDate: '2025-04-01' },
-    { id: 'inv8', number: 'FAT-2025-008', customerName: 'Inovações SA', amount: 1200.00, status: 'overdue', dueDate: '2025-03-15' },
+    { id: 'FT_7', number: 'FAT-2025-007', customerName: 'LS-Car Control', amount: 450.00, status: 'pending', dueDate: '2025-04-01' },
+    { id: 'FT_8', number: 'FAT-2025-008', customerName: 'Tecnologias S.A', amount: 1200.00, status: 'overdue', dueDate: '2025-03-15' },
   ],
   '4': [
-    { id: 'inv9', number: 'REC-2024-001', customerName: 'Antiga Firma', amount: 300.00, status: 'paid', dueDate: '2024-12-20' },
-    { id: 'inv10', number: 'REC-2024-002', customerName: 'Antiga Firma 2', amount: 450.00, status: 'paid', dueDate: '2024-12-25' },
+    { id: 'FT_9', number: 'REC-2024-001', customerName: 'Transpotes Edigar', amount: 300.00, status: 'paid', dueDate: '2024-12-20' },
+    { id: 'FT_10', number: 'REC-2024-002', customerName: 'Abreu Logisticas', amount: 450.00, status: 'pending', dueDate: '2024-12-25' },
   ],
 };
 
 const mockCustomersByFolder: Record<string, Customer[]> = {
   '1': [
-    { id: 'cust1', name: 'Empresa Alpha', email: 'contato@alpha.com', phone: '(11) 99999-1111', totalInvoices: 2, totalPaid: 1250.00 },
-    { id: 'cust2', name: 'Beta Soluções', email: 'financeiro@beta.com', phone: '(11) 98888-2222', totalInvoices: 1, totalPaid: 0 },
-    { id: 'cust3', name: 'Gamma Ltda', email: 'faturamento@gamma.com', phone: '(21) 97777-3333', totalInvoices: 1, totalPaid: 2340.00 },
+    { id: 'cust1', name: 'Sonangol Angola', email: 'contato@sonangol.com', phone: '(11) 99999-1111', totalInvoices: 2, totalPaid: 1250.00 },
+    { id: 'cust2', name: 'Odebrestch Brasil', email: 'financeiro@debrestch.com', phone: '(11) 98888-2222', totalInvoices: 1, totalPaid: 0 },
+    { id: 'cust3', name: 'Endiaama Alemanha', email: 'faturaalemanha@g.com', phone: '(21) 97777-3333', totalInvoices: 1, totalPaid: 2340.00 },
   ],
   '2': [
-    { id: 'cust4', name: 'Omega Corp', email: 'contato@omega.com', phone: '(31) 96666-4444', totalInvoices: 1, totalPaid: 5000.00 },
-    { id: 'cust5', name: 'Sigma Inc', email: 'financeiro@sigma.com', phone: '(41) 95555-5555', totalInvoices: 1, totalPaid: 3200.00 },
+    { id: 'cust4', name: 'Primafrio Múrcia', email: 'contato@primafrio.com', phone: '(31) 96666-4444', totalInvoices: 1, totalPaid: 5000.00 },
+    { id: 'cust5', name: 'LS-Car Control', email: 'financeiro@lscarcontrol.com', phone: '(41) 95555-5555', totalInvoices: 1, totalPaid: 3200.00 },
   ],
   '3': [
-    { id: 'cust6', name: 'TechStart', email: 'contato@techstart.com', phone: '(51) 94444-6666', totalInvoices: 1, totalPaid: 0 },
-    { id: 'cust7', name: 'Inovações SA', email: 'financeiro@inovacoes.com', phone: '(61) 93333-7777', totalInvoices: 1, totalPaid: 0 },
+    { id: 'cust6', name: 'Transpotes Edigar', email: 'contato@edigar.com', phone: '(51) 94444-6666', totalInvoices: 1, totalPaid: 0 },
+    { id: 'cust7', name: 'Inovações S.A Lda', email: 'financeiro@inovacoes.com', phone: '(61) 93333-7777', totalInvoices: 1, totalPaid: 0 },
   ],
   '4': [
-    { id: 'cust8', name: 'Antiga Firma', email: 'antiga@firma.com', phone: '(71) 92222-8888', totalInvoices: 2, totalPaid: 750.00 },
+    { id: 'cust8', name: 'MEO Comunicações', email: 'antiga@meocomunicacao.com', phone: '(71) 92222-8888', totalInvoices: 2, totalPaid: 750.00 },
   ],
 };
 
-// ---------- API simulada ----------
+// API simulada
+
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 const mockFolders: Folder[] = [
   {
     id: '1',
-    name: 'Faturas Q1 2025',
+    name: 'Faturas de 2025',
     description: 'Todas as faturas do primeiro trimestre de 2025',
     invoiceCount: 4,
     customerCount: 3,
@@ -162,7 +164,7 @@ const deleteFolderAPI = async (id: string): Promise<void> => {
   await delay(400);
 };
 
-// ---------- Componente Modal Base ----------
+// Componente Modal Base
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -199,7 +201,7 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) =>
   );
 };
 
-// ---------- Modal de Detalhes da Pasta (com abas) ----------
+// Modal de Detalhes da Pasta (com abas)
 interface FolderDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -244,11 +246,11 @@ const FolderDetailsModal = ({ isOpen, onClose, folder }: FolderDetailsModalProps
     <Modal isOpen={isOpen} onClose={onClose} title={`Detalhes: ${folder.name}`} size="lg">
       <div className="space-y-4">
         {/* Informações gerais */}
-        <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-          <p className="text-gray-600 dark:text-gray-300">{folder.description || 'Sem descrição'}</p>
+        <div className="bg-gray-50 p-4">
+          <p className="text-stone-400 ">{folder.description || 'Sem descrição'}</p>
           <div className="mt-3 flex gap-4 text-sm text-gray-500 dark:text-gray-400">
-            <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> Criado: {new Date(folder.createdAt).toLocaleDateString('pt-BR')}</span>
-            <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> Atualizado: {new Date(folder.updatedAt).toLocaleDateString('pt-BR')}</span>
+            <span className="flex items-center gap-1 text-stone-400"><Calendar className="h-4 w-4" /> Criado: {new Date(folder.createdAt).toLocaleDateString('pt-BR')}</span>
+            <span className="flex items-center gap-1 text-stone-400"><Calendar className="h-4 w-4" /> Atualizado: {new Date(folder.updatedAt).toLocaleDateString('pt-BR')}</span>
           </div>
         </div>
 
@@ -282,7 +284,7 @@ const FolderDetailsModal = ({ isOpen, onClose, folder }: FolderDetailsModalProps
         <div className="mt-4">
           {loading ? (
             <div className="flex justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+              <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
             </div>
           ) : activeTab === 'invoices' ? (
             invoices.length === 0 ? (
@@ -350,7 +352,7 @@ const FolderDetailsModal = ({ isOpen, onClose, folder }: FolderDetailsModalProps
   );
 };
 
-// ---------- Componente Card (sem Link, com botão) ----------
+// Componente Card (sem Link, com botão)
 interface FolderCardProps {
   folder: Folder;
   onEdit: (folder: Folder) => void;
@@ -365,23 +367,23 @@ const FolderCard = ({ folder, onEdit, onDelete, onViewDetails }: FolderCardProps
   };
 
   return (
-    <div className="group relative rounded-xl border border-gray-200 bg-white p-5 transition-all hover:shadow-lg dark:border-gray-800 dark:bg-gray-900">
+    <div className="group relative rounded-xl border border-stone-400 p-5 transition-all hover:shadow-lg">
       <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-2">
           <FolderOpen className="h-6 w-6 text-blue-500" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{folder.name}</h3>
+          <h3 className="text-lg font-semibold text-stone-500">{folder.name}</h3>
         </div>
         <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           <button
             onClick={() => onEdit(folder)}
-            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-gray-800"
+            className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-300 hover:text-stone-400"
             aria-label="Editar pasta"
           >
             <Edit className="h-4 w-4" />
           </button>
           <button
             onClick={() => onDelete(folder.id)}
-            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-800"
+            className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-300 hover:text-red-600"
             aria-label="Excluir pasta"
           >
             <Trash2 className="h-4 w-4" />
@@ -391,7 +393,7 @@ const FolderCard = ({ folder, onEdit, onDelete, onViewDetails }: FolderCardProps
 
       <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{folder.description}</p>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500 dark:text-gray-500">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-stone-400">
         <div className="flex gap-3">
           <span className="flex items-center gap-1">📄 {folder.invoiceCount} faturas</span>
           <span className="flex items-center gap-1">👥 {folder.customerCount} clientes</span>
@@ -401,7 +403,7 @@ const FolderCard = ({ folder, onEdit, onDelete, onViewDetails }: FolderCardProps
 
       <button
         onClick={() => onViewDetails(folder)}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-gray-50 py-2 text-sm font-medium text-blue-600 transition hover:bg-gray-100 dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg  py-2 text-sm font-medium text-blue-600 transition border border-stone-400"
       >
         <Eye className="h-4 w-4" /> Ver detalhes
       </button>
@@ -409,7 +411,8 @@ const FolderCard = ({ folder, onEdit, onDelete, onViewDetails }: FolderCardProps
   );
 };
 
-// ---------- Componente Principal ----------
+// Componente Principal
+
 export default function FolderIndex() {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -533,23 +536,23 @@ export default function FolderIndex() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
-        <nav className="mb-6 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
-          <a href="/dashboard" className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-300">
+        <nav className="mb-6 flex items-center gap-1 text-sm text-stone-500">
+          <a href="/dashboard" className="flex items-center gap-1 hover:text-stone-400">
             <Home className="h-4 w-4" />
             Dashboard
           </a>
           <ChevronRight className="h-4 w-4" />
-          <span className="font-medium text-gray-900 dark:text-white">Pastas</span>
+          <span className="font-medium text-stone-500">Pastas</span>
         </nav>
 
         {/* Cabeçalho */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Pastas</h1>
-            <p className="mt-1 text-gray-600 dark:text-gray-400">
+            <h1 className="text-3xl font-bold tracking-tight text-stone-500">Pastas</h1>
+            <p className="mt-1 text-stone-400 ">
               Organize suas faturas e clientes em pastas personalizadas
             </p>
           </div>
@@ -574,21 +577,21 @@ export default function FolderIndex() {
               placeholder="Buscar pastas..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+              className="w-full rounded-lg border border-stone-400 py-2 pl-10 bg-stone-100 pr-4 text-sm focus:outline-none placeholder:text-stone-400"
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Ordenar por:</span>
-            <div className="flex gap-1 rounded-lg border border-gray-200 bg-white p-1 dark:border-gray-800 dark:bg-gray-900">
+          <div className="flex items-center gap-2 ">
+            <span className="text-sm text-stone-400">Ordenar por:</span>
+            <div className="flex gap-1 rounded-lg border border-stone-400 p-1 ">
               {(['name', 'invoiceCount', 'createdAt'] as SortField[]).map((field) => (
                 <button
                   key={field}
                   onClick={() => toggleSort(field)}
                   className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium transition ${
                     sortField === field
-                      ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                      : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+                      ? 'bg-stone-200 text-stone-400'
+                      : 'text-stone-400 hover:bg-stone-300'
                   }`}
                 >
                   {field === 'name' && 'Nome'}
@@ -651,7 +654,7 @@ export default function FolderIndex() {
         )}
       </div>
 
-      {/* Modais */}
+      {/* Modais btn principal abre essa modal*/}
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Nova Pasta">
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
@@ -692,6 +695,8 @@ export default function FolderIndex() {
           </div>
         </form>
       </Modal>
+
+         {/* Modal de editar btn_editar */}
 
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Editar Pasta">
         <form onSubmit={handleEdit} className="space-y-4">

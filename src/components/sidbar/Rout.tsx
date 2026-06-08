@@ -18,14 +18,14 @@ const Rout = ({
      rounded px-2 py-1.5 text-sm 
      transition-[box-shadow,_background-color,_color] ${
        isActive
-         ? "bg-white text-stone-950 shadow"
-         : "hover:bg-slate-200 bg-transparent text-stone-500 shadow-none"
+         ? "bg-stone-100 text-stone-400 shadow"
+         : "hover:bg-stone-200 bg-transparent text-stone-500 shadow-none"
      }`
       }
     >
       {({ isActive }) => (
         <>
-          <Icon className={isActive ? "text-violet-500" : ""} />
+          <Icon className={isActive ? "text-blue-600" : ""} />
           <span>{title}</span>
         </>
       )}

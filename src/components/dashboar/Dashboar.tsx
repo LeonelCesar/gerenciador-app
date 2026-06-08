@@ -299,9 +299,7 @@ const MetricCard = ({ title, value, icon, trend }: MetricCardProps) => {
     <div className="rounded-xl p-6 shadow-sm border border-stone-400 transition-all hover:shadow-md">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-stone-400">
-            {title}
-          </p>
+          <p className="text-sm font-medium text-stone-400">{title}</p>
           <p className="mt-2 text-2xl font-bold text-stone-500">
             {formattedValue}
           </p>
@@ -356,29 +354,25 @@ const TransactionsTable = ({
     const config: Record<string, { label: string; className: string }> = {
       paid: {
         label: "Pago",
-        className:
-          "bg-green-100 border border-lg text-green-600",
+        className: "bg-green-100 border border-lg text-green-600",
       },
       pending: {
         label: "Pendente",
-        className:
-          "bg-yellow-100 text-yellow-800 border border-lg",
+        className: "bg-yellow-100 text-yellow-800 border border-lg",
       },
       overdue: {
         label: "Vencido",
-        className:
-          "bg-red-100 text-red-800 border border-lg",
+        className: "bg-red-100 text-red-800 border border-lg",
       },
       refunded: {
         label: "Reembolsado",
-        className:
-          "bg-gray-100 text-gray-800 border border-lg",
+        className: "bg-gray-200 text-stone-400 border border-lg",
       },
     };
     const c = config[status] || config.pending;
     return (
       <span
-        className={`rounded-full px-2 py-1 text-xs font-medium ${c.className}`}
+        className={`rounded-full px-2 py-1 text-xs font-medium border border-stone-400 ${c.className}`}
       >
         {c.label}
       </span>
@@ -402,22 +396,15 @@ const TransactionsTable = ({
           </thead>
           <tbody className="divide-y divide-stone-300 ">
             {paginatedTransactions.map((tx) => (
-              <tr
-                key={tx.id}
-                className="hover:bg-stone-200 transition"
-              >
+              <tr key={tx.id} className="hover:bg-stone-200 transition">
                 <td className="py-3 font-medium text-stone-400">
                   {tx.customerName}
                 </td>
-                <td className="py-3 text-stone-400">
-                  {tx.plan}
-                </td>
+                <td className="py-3 text-stone-400">{tx.plan}</td>
                 <td className="py-3 text-right font-medium text-stone-400 pr-6">
                   {formatCurrency(tx.amount)}
                 </td>
-                <td className="py-3 text-stone-400">
-                  {formatDate(tx.date)}
-                </td>
+                <td className="py-3 text-stone-400">{formatDate(tx.date)}</td>
                 <td className="py-3 text-stone-400 ">
                   {formatDate(tx.dueDate)}
                 </td>
@@ -630,12 +617,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        <h1 className="text-3xl font-bold text-stone-500">
-          Dashboard
-        </h1>
-        <p className="mt-1 text-stone-400">
-          Visão geral do seu negócio
-        </p>
+        <h1 className="text-3xl font-bold text-stone-500">Dashboard</h1>
+        <p className="mt-1 text-stone-400">Visão geral do seu negócio</p>
 
         {/* Cards */}
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -908,7 +891,7 @@ export default function Dashboard() {
               className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white disabled:opacity-70"
             >
               {formLoading && (
-                <Loader2 className="mr-1 inline h-4 w-4 animate-spin"/>
+                <Loader2 className="mr-1 inline h-4 w-4 animate-spin" />
               )}{" "}
               Salvar
             </button>

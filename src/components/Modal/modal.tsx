@@ -1,5 +1,3 @@
-"use client"; // se for Next.js 13 app router
-
 import { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";

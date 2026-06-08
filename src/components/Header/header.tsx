@@ -86,7 +86,7 @@ export default function Header({
 
   return (
     <header className="sticky top-0 z-30 bg-stone-100 border-b border-stone-200 shadow-sm">
-      <div className="flex items-center justify-between px-4 py-3 lg:px-6">
+      <div className="flex items-center justify-between py-4 lg:px-6">
         {/* Logo / Nome da empresa */}
         <div className="flex items-center gap-3">
           <button
