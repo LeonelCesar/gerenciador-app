@@ -20,7 +20,7 @@ import {
   Phone,
 } from 'lucide-react';
 
-// ---------- Tipos ----------
+//  Tipos 
 interface Folder {
   id: string;
   name: string;
@@ -185,12 +185,12 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) =>
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className={`w-full ${sizeClasses[size]} rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-900 max-h-[90vh] overflow-y-auto`}>
+      <div className={`w-full ${sizeClasses[size]} rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto`}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h2>
+          <h2 className="text-xl font-semibold text-stone-500">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800"
+            className="rounded-lg px-4 py-2 border border-stone-400 text-stone-400  hover:bg-stone-400 hover:text-stone-300"
           >
             <X className="h-5 w-5" />
           </button>
@@ -255,14 +255,14 @@ const FolderDetailsModal = ({ isOpen, onClose, folder }: FolderDetailsModalProps
         </div>
 
         {/* Abas */}
-        <div className="border-b border-gray-200 dark:border-gray-700">
+        <div className="">
           <nav className="flex gap-4">
             <button
               onClick={() => setActiveTab('invoices')}
               className={`flex items-center gap-2 pb-2 px-1 text-sm font-medium transition ${
                 activeTab === 'invoices'
-                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  ? 'border-b-2 border-blue-500 text-blue-600'
+                  : 'text-stone-400 hover:text-stone-500'
               }`}
             >
               <FileText className="h-4 w-4" /> Faturas ({invoices.length})
@@ -271,8 +271,8 @@ const FolderDetailsModal = ({ isOpen, onClose, folder }: FolderDetailsModalProps
               onClick={() => setActiveTab('customers')}
               className={`flex items-center gap-2 pb-2 px-1 text-sm font-medium transition ${
                 activeTab === 'customers'
-                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  ? 'border-b-2 border-blue-500 text-blue-600'
+                  : 'text-stone-400 hover:text-stone-500'
               }`}
             >
               <Users className="h-4 w-4" /> Clientes ({customers.length})
@@ -295,8 +295,8 @@ const FolderDetailsModal = ({ isOpen, onClose, folder }: FolderDetailsModalProps
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="border-b border-gray-200 dark:border-gray-700">
-                    <tr className="text-left text-gray-600 dark:text-gray-400">
+                  <thead className="border-b border-stone-400">
+                    <tr className="text-left text-stone-500">
                       <th className="pb-2">Número</th>
                       <th className="pb-2">Cliente</th>
                       <th className="pb-2 text-right">Valor</th>
@@ -304,9 +304,9 @@ const FolderDetailsModal = ({ isOpen, onClose, folder }: FolderDetailsModalProps
                       <th className="pb-2">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                  <tbody className="divide-y divide-stone-400">
                     {invoices.map((inv) => (
-                      <tr key={inv.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                      <tr key={inv.id} className="hover:bg-stone-100">
                         <td className="py-2 font-medium">{inv.number}</td>
                         <td className="py-2">{inv.customerName}</td>
                         <td className="py-2 text-right">{formatCurrency(inv.amount)}</td>
@@ -327,17 +327,17 @@ const FolderDetailsModal = ({ isOpen, onClose, folder }: FolderDetailsModalProps
             ) : (
               <div className="space-y-3">
                 {customers.map((customer) => (
-                  <div key={customer.id} className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+                  <div key={customer.id} className="rounded-lg border border-stone-400 p-4">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white">{customer.name}</h4>
-                        <div className="mt-1 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                        <h4 className="font-semibold text-stone-500">{customer.name}</h4>
+                        <div className="mt-1 space-y-1 text-sm text-stone-400">
                           <div className="flex items-center gap-2"><Mail className="h-3 w-3" /> {customer.email}</div>
                           <div className="flex items-center gap-2"><Phone className="h-3 w-3" /> {customer.phone}</div>
                         </div>
                       </div>
                       <div className="text-right text-sm">
-                        <div className="text-gray-600 dark:text-gray-400">Total faturas: {customer.totalInvoices}</div>
+                        <div className="text-stone-400">Total faturas: {customer.totalInvoices}</div>
                         <div className="font-medium text-green-600 dark:text-green-400">Total pago: {formatCurrency(customer.totalPaid)}</div>
                       </div>
                     </div>
@@ -391,7 +391,7 @@ const FolderCard = ({ folder, onEdit, onDelete, onViewDetails }: FolderCardProps
         </div>
       </div>
 
-      <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{folder.description}</p>
+      <p className="mb-4 text-sm text-stone-400 line-clamp-2">{folder.description}</p>
 
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-stone-400">
         <div className="flex gap-3">
@@ -658,29 +658,29 @@ export default function FolderIndex() {
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Nova Pasta">
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome da pasta *</label>
+            <label className="block text-sm font-medium text-stone-400">Nome da pasta *</label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-gray-400 px-3 py-2 focus:outline-none"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição (opcional)</label>
+            <label className="block text-sm font-medium text-stone-400">Descrição (opcional)</label>
             <textarea
               rows={3}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-gray-400 px-3 py-2 focus:outline-none"
             />
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={() => setIsCreateModalOpen(false)}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="rounded-lg border border-stone-400 px-4 py-2 text-sm font-medium text-stone-400  hover:bg-stone-400 hover:text-stone-300"
             >
               Cancelar
             </button>
@@ -701,29 +701,29 @@ export default function FolderIndex() {
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Editar Pasta">
         <form onSubmit={handleEdit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome da pasta *</label>
+            <label className="block text-sm font-medium text-stone-400">Nome da pasta *</label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2 focus:outline-none"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
+            <label className="block text-sm font-medium text-stone-400">Descrição</label>
             <textarea
               rows={3}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="mt-1 w-full rounded-lg border border-stone-400 px-3 py-2 focus:outline-none"
             />
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={() => setIsEditModalOpen(false)}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="rounded-lg border border-stone-400 px-4 py-2 text-sm font-medium text-stone-400  hover:bg-stone-400 hover:text-stone-300"
             >
               Cancelar
             </button>

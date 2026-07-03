@@ -16,7 +16,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-// ---------- Tipos ----------
+//  Tipos 
 interface Service {
   id: string;
   name: string;
@@ -30,7 +30,7 @@ interface Service {
 // Opções de duração
 const DURATIONS = ['Mensal', 'Trimestral', 'Semestral', 'Anual'];
 
-// ---------- Dados Mockados ----------
+//  Dados Mockados 
 const mockServices: Service[] = [
   {
     id: '1',
@@ -79,7 +79,7 @@ const mockServices: Service[] = [
   },
 ];
 
-// ---------- API Simulada ----------
+//  API Simulada 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const fetchServices = async (): Promise<Service[]> => {
