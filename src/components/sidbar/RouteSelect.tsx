@@ -9,8 +9,8 @@ function RouteSelect() {
       <Rout Icon={FiPaperclip} title="Invoices" to="/invoices" />
       <Rout Icon={FiLink} title="Interactions" to="/interactions" />
       <Rout Icon={FiFolderMinus} title="Folders Index" to="/folders" />
-      <Rout Icon={FiRss} title="Internet Work" to="/internet" />
-      <Rout Icon={FiSettings} title="Services" to="/services" />
+      {/* <Rout Icon={FiSettings} title="Services" to="/services" />
+      <Rout Icon={FiRss} title="Internet Work" to="/internet" /> */}
     </div>
   );
 }
